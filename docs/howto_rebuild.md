@@ -4,7 +4,7 @@ Follow these steps to spin up a basic Phoenix app with my standard config and fu
 
 See also:
 
-  * https://github.com/topherhunt/vanilla_phx/ (the result of following these steps)
+  * https://github.com/topherhunt/triggers_phx/ (the result of following these steps)
   * https://hexdocs.pm/phoenix/up_and_running.html (incomplete, but useful)
   * https://hexdocs.pm/phoenix/heroku.html
 

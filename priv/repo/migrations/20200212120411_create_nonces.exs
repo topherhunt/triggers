@@ -1,4 +1,4 @@
-defmodule Vanilla.Repo.Migrations.CreateNonces do
+defmodule Triggers.Repo.Migrations.CreateNonces do
   use Ecto.Migration
 
   def change do

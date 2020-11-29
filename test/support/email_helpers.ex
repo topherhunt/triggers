@@ -1,4 +1,4 @@
-defmodule VanillaWeb.EmailHelpers do
+defmodule TriggersWeb.EmailHelpers do
   use ExUnit.CaseTemplate
 
   def count_emails_sent, do: length(Bamboo.SentEmail.all())

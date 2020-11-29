@@ -1,9 +1,9 @@
-defmodule Vanilla.MixProject do
+defmodule Triggers.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :vanilla,
+      app: :triggers,
       version: "0.1.0",
       elixir: "1.8.1",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -19,7 +19,7 @@ defmodule Vanilla.MixProject do
   # Type `mix help compile.app` for more information.
   def application do
     [
-      mod: {Vanilla.Application, []},
+      mod: {Triggers.Application, []},
       extra_applications: [:logger, :runtime_tools, :os_mon]
     ]
   end

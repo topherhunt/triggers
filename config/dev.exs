@@ -2,7 +2,7 @@ use Mix.Config
 
 config :logger, level: :debug
 
-config :vanilla, Vanilla.Repo,
+config :triggers, Triggers.Repo,
   url: H.env!("DATABASE_URL"),
   pool_size: 10,
   show_sensitive_data_on_connection_error: true
@@ -13,7 +13,7 @@ config :vanilla, Vanilla.Repo,
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with webpack to recompile .js and .css sources.
-config :vanilla, VanillaWeb.Endpoint,
+config :triggers, TriggersWeb.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
@@ -54,13 +54,13 @@ config :vanilla, VanillaWeb.Endpoint,
 # different ports.
 
 # Watch static and templates for browser reloading.
-config :vanilla, VanillaWeb.Endpoint,
+config :triggers, TriggersWeb.Endpoint,
   live_reload: [
     patterns: [
       ~r"priv/static/.*(js|css|scss|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/vanilla_web/{live,views}/.*(ex)$",
-      ~r"lib/vanilla_web/templates/.*(eex)$"
+      ~r"lib/triggers_web/{live,views}/.*(ex)$",
+      ~r"lib/triggers_web/templates/.*(eex)$"
     ]
   ]
 

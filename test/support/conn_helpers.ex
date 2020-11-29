@@ -1,11 +1,11 @@
-defmodule VanillaWeb.ConnHelpers do
+defmodule TriggersWeb.ConnHelpers do
   use ExUnit.CaseTemplate
   # import Plug.Conn
   import Phoenix.ConnTest
-  alias Vanilla.Factory
-  alias VanillaWeb.Router.Helpers, as: Routes
+  alias Triggers.Factory
+  alias TriggersWeb.Router.Helpers, as: Routes
 
-  @endpoint VanillaWeb.Endpoint
+  @endpoint TriggersWeb.Endpoint
 
   def login(conn, user) do
     # Plug.Conn.assign(conn, :current_user, user)

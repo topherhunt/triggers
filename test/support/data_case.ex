@@ -1,4 +1,4 @@
-defmodule Vanilla.DataCase do
+defmodule Triggers.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -10,7 +10,7 @@ defmodule Vanilla.DataCase do
   we enable the SQL sandbox, so changes done to the database
   are reverted at the end of every test. If you are using
   PostgreSQL, you can even run database tests asynchronously
-  by setting `use VanillaWeb.DataCase, async: true`, although
+  by setting `use TriggersWeb.DataCase, async: true`, although
   this option is not recommendded for other databases.
   """
 
@@ -18,21 +18,21 @@ defmodule Vanilla.DataCase do
 
   using do
     quote do
-      alias Vanilla.Repo
-      alias Vanilla.Factory
+      alias Triggers.Repo
+      alias Triggers.Factory
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import Vanilla.DataCase
+      import Triggers.DataCase
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Vanilla.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Triggers.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(Vanilla.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Triggers.Repo, {:shared, self()})
     end
 
     :ok
