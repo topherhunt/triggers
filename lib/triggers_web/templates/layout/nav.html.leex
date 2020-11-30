@@ -6,9 +6,11 @@
   <div id="navbar-content" class="collapse navbar-collapse">
     <ul class="navbar-nav mr-auto"></ul>
     <ul class="navbar-nav">
-      <li class="nav-item"><%= link "LiveView test", to: "/test_live", class: "nav-link" %></li>
 
       <%= if @current_user do %>
+
+        <li class="nav-item"><%= link "Upcoming", to: Routes.trigger_path(TriggersWeb.Endpoint, :upcoming), class: "nav-link #{if_path(conn, "upcoming", "active")}" %></li>
+        <li class="nav-item"><%= link "History", to: Routes.trigger_path(TriggersWeb.Endpoint, :history), class: "nav-link #{if_path(conn, "history", "active")}" %></li>
 
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">

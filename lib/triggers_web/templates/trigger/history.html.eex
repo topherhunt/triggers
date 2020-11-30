@@ -1,0 +1,12 @@
+<h3>History</h3>
+
+<table class="table w-auto">
+  <%= for instance <- @instances do %>
+    <tr>
+      <td><%= instance.trigger.title %></td>
+      <td><%= H.print_datetime(instance.resolved_at) %></td>
+      <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
+      <td><%= link "details", to: Routes.trigger_path(@conn, :show, instance.trigger) %></td>
+    </tr>
+  <% end %>
+</table>

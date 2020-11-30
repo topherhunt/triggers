@@ -1,0 +1,35 @@
+<div class="float-right"><%= link "+ New trigger", to: Routes.trigger_path(@conn, :new) %></div>
+<h3>Active triggers</h3>
+
+<table class="table">
+  <%= for trigger <- @triggers do %>
+    <% past_instances =
+      trigger.instances
+      |> Enum.filter(& &1.status != nil)
+      |> Enum.sort(& -DateTime.to_unix(&1.resolved_at))
+      |> Enum.take(14) %>
+    <% next_instance = Trigger.next_instance(trigger) %>
+    <tr>
+      <td>
+        <%= trigger.title %>
+        <div>
+          <%= for i <- past_instances do %>
+            <div class="resolved-bubble --<%= i.status %>"></div>
+          <% end %>
+        </div>
+      </td>
+
+      <td class="<%= if due_now?(next_instance), do: "text-danger" %>">
+        <%= H.print_datetime(next_instance.due_at) %>
+      </td>
+
+      <td>
+        <%= if due_by_today?(next_instance) do %>
+          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :respond, next_instance.id, status: "done"), class: "btn btn-success btn-sm", return_to: "upcoming" %> &nbsp;
+          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :respond, next_instance.id, status: "wont_do"), class: "btn btn-danger btn-sm", return_to: "upcoming" %> &nbsp;
+        <% end %>
+        <%= link "details", to: Routes.trigger_path(@conn, :show, trigger) %>
+      </td>
+    </tr>
+  <% end %>
+</table>

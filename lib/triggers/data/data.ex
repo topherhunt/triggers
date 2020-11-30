@@ -108,18 +108,48 @@ defmodule Triggers.Data do
 
   #
   # Triggers
-  # TODO. Maybe don't write these context functions yet. Too much boundary.
   #
 
-  # def insert_trigger!(a \\ %Trigger{}, b, c), do: insert_trigger(a, b, c) |> Repo.unwrap!()
-  # def insert_trigger(%Trigger{} = struct \\ %Trigger{}, params, scope) do
-  #   struct |> Trigger.changeset(params, scope) |> Repo.insert()
-  # end
+  def insert_trigger!(a, b, c), do: insert_trigger(a, b, c) |> Repo.unwrap()
+  def insert_trigger(struct, params, context) do
+    struct
+    |> Trigger.changeset(params, context)
+    |> Repo.insert()
+    |> case do
+      {:ok, trigger} ->
+        Trigger.refresh_active_instance!(trigger)
+        {:ok, trigger}
+      other -> other
+    end
+  end
 
-  # def update_trigger!(a, b, c), do: update_trigger(a, b, c) |> Repo.unwrap!()
-  # def update_trigger(%Trigger{} = struct, params, scope) do
-  #   struct |> Trigger.changeset(params, scope) |> Repo.update()
-  # end
+  def update_trigger!(a, b, c), do: update_trigger(a, b, c) |> Repo.unwrap!()
+  def update_trigger(trigger, params, context) do
+    trigger
+    |> Trigger.changeset(params, context)
+    |> Repo.update()
+    |> case do
+      {:ok, trigger} ->
+        Trigger.refresh_active_instance!(trigger)
+        {:ok, trigger}
+      other -> other
+    end
+  end
 
-  # def delete_trigger!(user), do: Repo.delete!(user)
+  #
+  # TriggerInstances
+  #
+
+  def insert_trigger_instance!(params) do
+    %TriggerInstance{}
+    |> TriggerInstance.changeset(params, :admin)
+    |> Repo.insert!()
+  end
+
+  def update_trigger_instance!(instance, params) do
+    instance
+    |> TriggerInstance.changeset(params, :admin)
+    |> Repo.update!()
+  end
+
 end

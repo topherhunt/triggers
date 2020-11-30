@@ -19,7 +19,8 @@ defmodule Triggers.Repo.Migrations.CreateTriggers do
 
     create table(:trigger_instances) do
       add :trigger_id, :integer, null: false
-      add :date, :date, null: false
+      add :due_at, :utc_datetime, null: false
+      add :resolved_at, :utc_datetime
       add :status, :text
       timestamps()
     end

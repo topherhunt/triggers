@@ -57,6 +57,11 @@ defmodule TriggersWeb.Router do
     get "/account/edit", UserController, :edit
     patch "/account/update", UserController, :update
     patch "/account/update_email", UserController, :update_email
+
+    get "/triggers/upcoming", TriggerController, :upcoming
+    get "/triggers/history", TriggerController, :history
+    get "/triggers/:instance_id/resolve", TriggersController, :resolve
+    resources "/triggers", TriggerController, except: [:index]
   end
 
   # Other scopes may use custom stacks.

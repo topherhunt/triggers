@@ -3,5 +3,6 @@
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 @import "icons.scss";
 @import "layout.scss";
+@import "triggers.scss";
 @import "tooltips.scss";
 @import "utilities.scss";

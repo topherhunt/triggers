@@ -1,0 +1,17 @@
+
+.resolved-bubble {
+  float: left;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  background-color: #000;
+
+  &.--done {
+    background-color: green;
+  }
+
+  &.--wont_do {
+    background-color: red;
+  }
+}

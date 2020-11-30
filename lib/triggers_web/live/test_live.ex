@@ -13,8 +13,7 @@ defmodule TriggersWeb.TestLive do
     """
   end
 
-  def mount(params, assigns, socket) do
-    IO.inspect(params, label: "params")
+  def mount(_params, assigns, socket) do
     IO.inspect(assigns, label: "assigns")
 
     socket

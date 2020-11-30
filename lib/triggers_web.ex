@@ -26,6 +26,7 @@ defmodule TriggersWeb do
       import TriggersWeb.Gettext
       import TriggersWeb.SentryPlugs
       alias TriggersWeb.Router.Helpers, as: Routes
+      alias Triggers.Helpers, as: H
       alias Triggers.Repo
     end
   end
@@ -84,9 +85,10 @@ defmodule TriggersWeb do
       import Phoenix.LiveView.Helpers # live_render, live_component, live_patch, etc.
       import Phoenix.View # Basic rendering functionality (render, render_layout, etc)
       import TriggersWeb.ErrorHelpers
-      import TriggersWeb.FormHelpers
+      import TriggersWeb.MiscHelpers
       import TriggersWeb.Gettext
       alias TriggersWeb.Router.Helpers, as: Routes
+      alias Triggers.Helpers, as: H
     end
   end
 

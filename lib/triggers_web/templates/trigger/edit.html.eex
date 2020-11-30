@@ -1,0 +1,3 @@
+<h3>Edit trigger</h3>
+
+<%= render "_form.html", changeset: @changeset, method: :patch, path: Routes.trigger_path(@conn, :update, @trigger.id) %>
