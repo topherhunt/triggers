@@ -1,0 +1,14 @@
+<h3>You have <%= length(@triggers) %> due triggers.</h3>
+
+<p><strong><%= link "See all", to: Routes.trigger_url(TriggersWeb.Endpoint, :upcoming) %></strong></p>
+
+<table>
+  <%= for trigger <- @triggers do %>
+    <% next_instance = Trigger.next_instance(trigger) %>
+    <tr>
+      <td><%= trigger.title %></td>
+      <td><%= H.print_datetime(next_instance.due_at) %></td>
+      <td><%= link "details", to: Routes.trigger_url(TriggersWeb.Endpoint, :show, trigger) %></td>
+    </tr>
+  <% end %>
+</table>

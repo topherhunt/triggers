@@ -13,6 +13,7 @@ defmodule Triggers.Application do
     # List all child processes to be supervised
     children = [
       Triggers.Repo,
+      Triggers.Scheduler,
       Triggers.Telemetry,
       TriggersWeb.Endpoint,
       {Phoenix.PubSub, name: Triggers.PubSub}

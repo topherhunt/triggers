@@ -54,6 +54,7 @@ defmodule Triggers.MixProject do
       {:bamboo_smtp, "~> 3.0"},
       {:floki, "~> 0.24"},
       {:nanoid, "~> 2.0"},
+      {:quantum, "~> 3.0"},
       {:rollbax, "~> 0.11"},
       {:timex, "~> 3.6"},
 

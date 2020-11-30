@@ -31,6 +31,15 @@ defmodule Triggers.Emails do
     |> render("reset_password.html", url: url)
   end
 
+  def nag(user, triggers) do
+    preview = triggers |> Enum.map(& &1.title) |> Enum.join(", ") |> String.slice(0..100)
+
+    standard_email()
+    |> to(user.email)
+    |> subject("#{length(triggers)} due triggers: #{preview}")
+    |> render("nag.html", triggers: triggers)
+  end
+
   #
   # Internal
   #

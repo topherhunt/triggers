@@ -115,9 +115,18 @@ defmodule Triggers.Data.Trigger do
 
   def filter(query, :user_id, user_id), do: where(query, [t], t.user_id == ^user_id)
 
+  def filter(query, :can_nag, true) do
+    cutoff = Timex.now() |> Timex.shift(minutes: -15)
+    where(query, [t], t.last_nagged_at <= cutoff)
+  end
+
   # A trigger is considered active (either due now, or due in the future) if it has any
   # instance that hasn't been resolved yet.
   def filter(query, :active, true) do
     where(query, [t], fragment("EXISTS (SELECT * FROM trigger_instances i WHERE i.trigger_id = ? AND i.status IS NULL)", t.id))
+  end
+
+  def filter(query, :due, true) do
+    where(query, [t], fragment("EXISTS (SELECT * FROM trigger_instances i WHERE i.trigger_id = ? AND i.status IS NULL AND i.due_at <= NOW())", t.id))
   end
 end

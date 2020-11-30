@@ -30,6 +30,11 @@ config :rollbax,
   access_token: H.env!("ROLLBAR_ACCESS_TOKEN"),
   environment: "prod"
 
+config :triggers, Trigger.Scheduler,
+  jobs: [
+    {"*/15 * * * *", Triggers.Nagger, :send_nags, []}
+  ]
+
 # ## SSL Support
 #
 # To get SSL working, you will need to add the `https` key
