@@ -1,3 +1,5 @@
 <h3>Edit trigger</h3>
 
 <%= render "_form.html", changeset: @changeset, method: :patch, path: Routes.trigger_path(@conn, :update, @trigger.id) %>
+
+<%= link "Delete this trigger", to: Routes.trigger_path(@conn, :delete, @trigger.id), method: :delete, "data-confirm": "Permanently delete this trigger and all its records?" %>

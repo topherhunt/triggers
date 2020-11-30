@@ -1,4 +1,12 @@
-<div class="float-right"><%= link "+ New trigger", to: Routes.trigger_path(@conn, :new) %></div>
+
+<div class="float-right">
+  <%= if too_many_new_triggers?(@triggers) %>
+    <%= link "+ New trigger", to: Routes.trigger_path(@conn, :new), "data-confirm": "Whoa there! 🐎🤠 You've already added some triggers today. This tool works best when you build up your routine gradually. Are you sure you want to add another?" %>
+  <% else %>
+    <%= link "+ New trigger", to: Routes.trigger_path(@conn, :new) %>
+  <% end %>
+</div>
+
 <h3>Active triggers</h3>
 
 <table class="table">
