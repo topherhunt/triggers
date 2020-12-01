@@ -25,6 +25,7 @@ defmodule TriggersWeb do
       import Phoenix.LiveView.Controller
       import TriggersWeb.Gettext
       import TriggersWeb.SentryPlugs
+      import Ecto.Query
       alias TriggersWeb.Router.Helpers, as: Routes
       alias Triggers.Helpers, as: H
       alias Triggers.Repo
@@ -46,7 +47,7 @@ defmodule TriggersWeb do
   # See https://hexdocs.pm/phoenix_live_view/installation.html#phx-gen-live-support
   def live_view do
     quote do
-      use Phoenix.LiveView, layout: {TriggersWeb.LayoutView, "live.html"}
+      use Phoenix.LiveView #, layout: {TriggersWeb.LayoutView, "live.html"}
 
       # Include shared imports and aliases for views
       unquote(view_helpers())
@@ -89,6 +90,7 @@ defmodule TriggersWeb do
       import TriggersWeb.Gettext
       alias TriggersWeb.Router.Helpers, as: Routes
       alias Triggers.Helpers, as: H
+      alias Triggers.Repo
     end
   end
 

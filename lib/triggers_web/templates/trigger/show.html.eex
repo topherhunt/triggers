@@ -1,50 +1,53 @@
 <div>
-  <span class="h3"><%= @trigger.title %></span>
+  <span class="h3"><%= @trigger.title %></span> &nbsp;
   <%= link "edit", to: Routes.trigger_path(@conn, :edit, @trigger) %>
 </div>
 
-<%= if @next_instance do %>
-  <div class="text-center">
-    <strong>Due <%= H.print_datetime(@next_instance.due_at) %>.</strong><br>
-    <%= if due_by_today?(@next_instance) do %>
-      <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :respond, @next_instance.id, status: "done"), class: "btn btn-success" %> &nbsp;
-      <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :respond, @next_instance.id, status: "wont_do"), class: "btn btn-danger" %>
+<div class="row">
+  <div class="col">
+
+    <%= if @next_instance do %>
+      <div class="u-card my-3 text-center">
+        <strong>Due <%= H.print_datetime(@next_instance.due_at) %>.</strong><br>
+        <%= if due_by_today?(@next_instance) do %>
+          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, @next_instance.id, status: "done"), class: "btn btn-success" %> &nbsp;
+          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, @next_instance.id, status: "wont_do"), class: "btn btn-danger" %>
+        <% end %>
+      </div>
     <% end %>
-  </div>
-<% end %>
 
-<table class="table w-auto">
-  <tr>
-    <td><strong>Why?</strong></td>
-    <td><%= @trigger.why %></td>
-  </tr>
-  <tr>
-    <td><strong>Details</strong></td>
-    <td><%= @trigger.details %></td>
-  </tr>
-  <tr>
-    <td><strong>Due</strong></td>
-    <td><%= H.print_datetime(@next_instance || hd(@past_instances)).due_at %></td>
-  </tr>
-  <tr>
-    <td><strong>Repeats</strong></td>
-    <td>
-      <%= if @trigger.repeat_in %>
-        every <%= @trigger.repeat_in_unit %> <%= @trigger.repeat_in %>s
-      <% else %>
-        no
+    <h4>History</h4>
+
+    <table class="table w-auto">
+      <%= for instance <- @past_instances do %>
+        <tr>
+          <td><%= H.print_date(instance.resolved_at) %></td>
+          <td><%= instance.status %></td>
+        </tr>
       <% end %>
-    </td>
-  </tr>
-</table>
+    </table>
 
-<h4>History</h4>
-
-<table class="table w-auto">
-  <%= for instance <- @past_instances do %>
-    <tr>
-      <td><%= H.print_date(instance.resolved_at) %></td>
-      <td><%= instance.status %></td>
-    </tr>
-  <% end %>
-</table>
+  </div>
+  <div class="col">
+    <table class="table w-auto">
+      <tr>
+        <td><strong>Why?</strong></td>
+        <td><%= @trigger.why %></td>
+      </tr>
+      <tr>
+        <td><strong>Details</strong></td>
+        <td><%= @trigger.details %></td>
+      </tr>
+      <tr>
+        <td><strong>Repeats</strong></td>
+        <td>
+          <%= if @trigger.repeat_in do %>
+            every <%= @trigger.repeat_in %> <%= @trigger.repeat_in_unit %>s
+          <% else %>
+            no
+          <% end %>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

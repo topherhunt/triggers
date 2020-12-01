@@ -60,7 +60,7 @@ defmodule TriggersWeb.Router do
 
     get "/triggers/upcoming", TriggerController, :upcoming
     get "/triggers/history", TriggerController, :history
-    get "/triggers/:instance_id/resolve", TriggersController, :resolve
+    get "/triggers/:instance_id/resolve", TriggerController, :resolve
     resources "/triggers", TriggerController, except: [:index]
   end
 

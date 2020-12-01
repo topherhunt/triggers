@@ -4,12 +4,14 @@
 #
 defmodule TriggersWeb.TriggerController do
   use TriggersWeb, :controller
+  alias Triggers.Data
+  alias Triggers.Data.{Trigger, TriggerInstance}
 
-  plug :require_login
+  plug :must_be_logged_in
 
   # The "main" view. Lists all triggers that are due now or due in the future,
   # ordered by due date/time ascending.
-  def upcoming(conn, params) do
+  def upcoming(conn, _params) do
     triggers =
       Trigger.filter(user: conn.assigns.current_user, active: true)
       |> preload(:trigger_instances)
@@ -20,10 +22,10 @@ defmodule TriggersWeb.TriggerController do
   end
 
   # Lists all instances of triggers I've completed in the past, in descending order.
-  def history(conn, params) do
+  def history(conn, _params) do
     instances =
       TriggerInstance.filter(user: conn.assigns.current_user, resolved: true)
-      |> order_by(resolved_at: :desc)
+      |> order_by(desc: :resolved_at)
       |> preload(:trigger)
       |> Repo.all()
 
@@ -35,12 +37,12 @@ defmodule TriggersWeb.TriggerController do
     next_instance = TriggerInstance.filter(trigger: trigger, resolved: false) |> Repo.one()
     past_instances =
       TriggerInstance.filter(trigger: trigger, resolved: true)
-      |> order_by(resolved_at: :desc)
+      |> order_by(desc: :resolved_at)
       |> Repo.all()
     render(conn, "show.html", trigger: trigger, past_instances: past_instances, next_instance: next_instance)
   end
 
-  def new(conn, %{"trigger" => trigger_params}) do
+  def new(conn, _params) do
     changeset = Trigger.changeset(%Trigger{}, %{}, :owner)
     render(conn, "new.html", changeset: changeset)
   end
@@ -48,9 +50,9 @@ defmodule TriggersWeb.TriggerController do
   def create(conn, %{"trigger" => trigger_params}) do
     user = conn.assigns.current_user
     case Data.insert_trigger(%Trigger{user_id: user.id}, trigger_params, :owner) do
-      {:ok, trigger} ->
+      {:ok, _trigger} ->
         conn
-        |> put_flash("Trigger saved.")
+        |> put_flash(:info, "Trigger saved.")
         |> redirect(to: Routes.trigger_path(conn, :upcoming))
       {:error, changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -66,9 +68,9 @@ defmodule TriggersWeb.TriggerController do
   def update(conn, %{"id" => id, "trigger" => trigger_params}) do
     trigger = load_trigger(conn, id)
     case Data.update_trigger(trigger, trigger_params, :owner) do
-      {:ok, trigger}
+      {:ok, trigger} ->
         conn
-        |> put_flash("Trigger saved.")
+        |> put_flash(:info, "Trigger saved.")
         |> redirect(to: Routes.trigger_path(conn, :show, trigger.id))
       {:error, changeset} ->
         render(conn, "edit.html", trigger: trigger, changeset: changeset)
@@ -77,12 +79,19 @@ defmodule TriggersWeb.TriggerController do
 
   def delete(conn, %{"id" => id}) do
     trigger = load_trigger(conn, id)
+    TriggerInstance.filter(trigger: trigger) |> Repo.delete_all()
+    Repo.delete!(trigger)
+
+    conn
+    |> put_flash(:info, "Trigger deleted.")
+    |> redirect(to: Routes.trigger_path(conn, :upcoming))
   end
 
   def resolve(conn, %{"instance_id" => instance_id, "status" => status} = params) do
-    instance = TriggerInstance.filter(id: instance_id, user: current_user) |> Repo.one!()
+    user = conn.assigns.current_user
+    instance = TriggerInstance.filter(id: instance_id, user: user) |> Repo.one!()
     trigger = Repo.get!(Trigger, instance.trigger_id)
-    Data.update_trigger_instance!(instance, %{status: status, resolved_at: Timex.now()})
+    Data.update_trigger_instance!(instance, %{status: status, resolved_at: H.now()})
     Trigger.refresh_active_instance!(trigger)
 
     return_to = case params["return_to"] do

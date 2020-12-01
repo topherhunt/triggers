@@ -1,7 +1,8 @@
 defmodule Triggers.Data do
   import Ecto.Query
   alias Triggers.Repo
-  alias Triggers.Data.{User, Nonce, LoginTry}
+  alias Triggers.Data.{User, Nonce, LoginTry, Trigger, TriggerInstance}
+  alias Triggers.Helpers, as: H
 
   #
   # Users
@@ -97,7 +98,7 @@ defmodule Triggers.Data do
 
   def count_recent_login_tries(email) do
     email = String.downcase(email)
-    time = Timex.now() |> Timex.shift(minutes: -15)
+    time = H.now() |> Timex.shift(minutes: -15)
     LoginTry |> where([t], t.email == ^email and t.inserted_at >= ^time) |> Repo.count()
   end
 
@@ -110,7 +111,7 @@ defmodule Triggers.Data do
   # Triggers
   #
 
-  def insert_trigger!(a, b, c), do: insert_trigger(a, b, c) |> Repo.unwrap()
+  def insert_trigger!(a, b, c), do: insert_trigger(a, b, c) |> Repo.unwrap!()
   def insert_trigger(struct, params, context) do
     struct
     |> Trigger.changeset(params, context)

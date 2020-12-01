@@ -9,8 +9,8 @@
 
       <%= if @current_user do %>
 
-        <li class="nav-item"><%= link "Upcoming", to: Routes.trigger_path(TriggersWeb.Endpoint, :upcoming), class: "nav-link #{if_path(conn, "upcoming", "active")}" %></li>
-        <li class="nav-item"><%= link "History", to: Routes.trigger_path(TriggersWeb.Endpoint, :history), class: "nav-link #{if_path(conn, "history", "active")}" %></li>
+        <li class="nav-item"><%= link "Upcoming", to: Routes.trigger_path(@conn, :upcoming), class: "nav-link #{if_path(@conn, "upcoming", "active")}" %></li>
+        <li class="nav-item"><%= link "History", to: Routes.trigger_path(@conn, :history), class: "nav-link #{if_path(@conn, "history", "active")}" %></li>
 
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown">
@@ -18,15 +18,15 @@
           </a>
           <div class="dropdown-menu dropdown-menu-right">
             <div class="dropdown-item em small"><%= gettext "Logged in as" %> <%= @current_user.email %></div>
-            <%= link "Account settings", to: Routes.user_path(TriggersWeb.Endpoint, :edit), class: "dropdown-item" %>
-            <%= link "Log out", to: Routes.auth_path(TriggersWeb.Endpoint, :logout), class: "dropdown-item text-danger" %>
+            <%= link "Account settings", to: Routes.user_path(@conn, :edit), class: "dropdown-item" %>
+            <%= link "Log out", to: Routes.auth_path(@conn, :logout), class: "dropdown-item text-danger" %>
           </div>
         </li>
 
       <% else %>
 
-        <li class="nav-item"><%= link gettext("Sign up"), to: Routes.auth_path(TriggersWeb.Endpoint, :signup), class: "nav-link" %></li>
-        <li class="nav-item"><%= link gettext("Log in"), to: Routes.auth_path(TriggersWeb.Endpoint, :login), class: "nav-link" %></li>
+        <li class="nav-item"><%= link gettext("Sign up"), to: Routes.auth_path(@conn, :signup), class: "nav-link" %></li>
+        <li class="nav-item"><%= link gettext("Log in"), to: Routes.auth_path(@conn, :login), class: "nav-link" %></li>
 
       <% end %>
 

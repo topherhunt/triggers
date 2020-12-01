@@ -1,3 +1,4 @@
+# Common one-line helpers that the standard Elixir lib doesn't give us.
 defmodule Triggers.Helpers do
 
   #
@@ -13,6 +14,10 @@ defmodule Triggers.Helpers do
   #
 
   def invert_map(map), do: Map.new(map, fn {k, v} -> {v, k} end)
+
+  # Example: H.try(user_maybe_nil, :field)
+  def try(nil, _), do: nil
+  def try(%{} = map, field), do: Map.get(map, field)
 
   #
   # Lists
@@ -57,6 +62,7 @@ defmodule Triggers.Helpers do
 
   def to_date(nil), do: nil
   def to_date(%DateTime{} = dt), do: DateTime.to_date(dt)
+  def to_date(%NaiveDateTime{} = dt), do: DateTime.to_date(dt)
 
   def date_gt?(a, b), do: Date.compare(a, b) == :gt # returns true if A > B
   def date_lt?(a, b), do: Date.compare(a, b) == :lt # returns true if A < B
@@ -69,6 +75,8 @@ defmodule Triggers.Helpers do
 
   # Returns A or B, whichever is later.
   def floor_date(%Date{} = a, %Date{} = b), do: if date_gt?(a, b), do: a, else: b
+
+  def today, do: Date.utc_today()
 
   #
   # Datetimes
@@ -86,8 +94,13 @@ defmodule Triggers.Helpers do
   def end_of_day(%Date{} = d), do: d |> Timex.to_datetime() |> end_of_day()
   def end_of_day(%DateTime{} = dt), do: dt |> Timex.end_of_day()
 
-  def hours_ago(n), do: Timex.now() |> Timex.shift(hours: -n)
-  def in_hours(n), do: Timex.now() |> Timex.shift(hours: n)
+  def hours_ago(n) when is_integer(n), do: now() |> Timex.shift(hours: -n)
+  def in_hours(n) when is_integer(n), do: now() |> Timex.shift(hours: n)
+
+  def mins_ago(n) when is_integer(n), do: now() |> Timex.shift(minutes: -n)
+  def in_mins(n) when is_integer(n), do: now() |> Timex.shift(minutes: n)
+
+  def now, do: DateTime.utc_now()
 
   #
   # Datetime formatting

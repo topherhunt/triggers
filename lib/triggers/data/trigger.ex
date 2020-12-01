@@ -2,8 +2,9 @@ defmodule Triggers.Data.Trigger do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
-  alias Triggers.Data
+  alias Triggers.{Data, Repo}
   alias Triggers.Data.{TriggerInstance, User}
+  alias Triggers.Helpers, as: H
 
   schema "triggers" do
     belongs_to :user, User
@@ -23,7 +24,7 @@ defmodule Triggers.Data.Trigger do
     struct
     |> cast(params, [:user_id, :title, :why, :details, :first_due_date, :due_time, :repeat_in, :repeat_in_unit, :last_nagged_at])
     |> validate_required([:user_id, :title, :why, :first_due_date, :due_time])
-    |> validate_inclusion(:repeat_in, ["day", "month"])
+    |> validate_inclusion(:repeat_in_unit, ["day", "month"])
     |> validate_repeat_in_fields()
   end
 
@@ -34,8 +35,8 @@ defmodule Triggers.Data.Trigger do
   end
 
   defp validate_repeat_in_fields(changeset) do
-    repeat_in_enabled = !!get_field(:repeat_in)
-    repeat_in_unit_present = !!get_field(:repeat_in_unit)
+    repeat_in_enabled = !!get_field(changeset, :repeat_in)
+    repeat_in_unit_present = !!get_field(changeset, :repeat_in_unit)
     if repeat_in_enabled != repeat_in_unit_present do
       add_error(changeset, :repeat_in, "isn't valid")
     else
@@ -48,7 +49,7 @@ defmodule Triggers.Data.Trigger do
   #
 
   def next_instance(%__MODULE__{} = trigger) do
-    Enum.find(trigger.instances, & &1.status == nil)
+    Enum.find(trigger.trigger_instances, & &1.status == nil)
   end
 
   # Used in sorting the upcoming triggers list.
@@ -65,13 +66,13 @@ defmodule Triggers.Data.Trigger do
 
     last_resolved =
       TriggerInstance.filter(trigger: trigger, resolved: true)
-      |> order_by(due_at: :desc)
+      |> order_by(desc: :due_at)
       |> Repo.first()
 
     cond do
       last_resolved == nil ->
         # This trigger has no instances yet. Add the first one.
-        date = trigger.first_due_date |> H.floor(Date.utc_today())
+        date = trigger.first_due_date |> H.floor_date(H.today())
         add_new_instance(trigger, date, trigger.due_time)
 
       trigger.repeat_in != nil ->
@@ -80,7 +81,7 @@ defmodule Triggers.Data.Trigger do
           last_resolved.due_at
           |> H.to_date()
           |> add_repeat_interval(trigger)
-          |> H.floor_date(Date.utc_today())
+          |> H.floor_date(H.today())
         add_new_instance(trigger, date, trigger.due_time)
 
       true ->
@@ -111,13 +112,15 @@ defmodule Triggers.Data.Trigger do
     Enum.reduce(filters, orig_query, fn {k, v}, query -> filter(query, k, v) end)
   end
 
+  def filter(query, :id, id), do: where(query, [t], t.id == ^id)
+
   def filter(query, :user, user), do: where(query, [t], t.user_id == ^user.id)
 
   def filter(query, :user_id, user_id), do: where(query, [t], t.user_id == ^user_id)
 
   def filter(query, :can_nag, true) do
-    cutoff = Timex.now() |> Timex.shift(minutes: -15)
-    where(query, [t], t.last_nagged_at <= cutoff)
+    cutoff = H.now() |> Timex.shift(minutes: -15)
+    where(query, [t], is_nil(t.last_nagged_at) or t.last_nagged_at <= ^cutoff)
   end
 
   # A trigger is considered active (either due now, or due in the future) if it has any
@@ -127,6 +130,6 @@ defmodule Triggers.Data.Trigger do
   end
 
   def filter(query, :due, true) do
-    where(query, [t], fragment("EXISTS (SELECT * FROM trigger_instances i WHERE i.trigger_id = ? AND i.status IS NULL AND i.due_at <= NOW())", t.id))
+    where(query, [t], fragment("EXISTS (SELECT * FROM trigger_instances i WHERE i.trigger_id = ? AND i.status IS NULL AND i.due_at <= ?)", t.id, ^H.now()))
   end
 end

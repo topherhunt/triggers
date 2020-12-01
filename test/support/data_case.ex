@@ -20,10 +20,12 @@ defmodule Triggers.DataCase do
     quote do
       alias Triggers.Repo
       alias Triggers.Factory
+      alias Triggers.Helpers, as: H
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
+      import TriggersWeb.EmailHelpers
       import Triggers.DataCase
     end
   end

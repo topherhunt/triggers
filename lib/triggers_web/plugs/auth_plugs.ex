@@ -7,9 +7,9 @@ defmodule TriggersWeb.AuthPlugs do
       put_session: 3,
       configure_session: 2
     ]
-  alias Triggers.Repo
-  alias Triggers.Data
+  alias Triggers.{Data, Repo}
   alias Triggers.Data.User
+  alias Triggers.Helpers, as: H
 
   #
   # Plugs
@@ -73,8 +73,8 @@ defmodule TriggersWeb.AuthPlugs do
   end
 
   defp set_assigned_user(conn, user) do
-    if user.last_visit_date != Date.utc_today() do
-      Data.update_user!(user, %{last_visit_date: Date.utc_today()}, :admin)
+    if user.last_visit_date != H.today() do
+      Data.update_user!(user, %{last_visit_date: H.today()}, :admin)
     end
 
     conn
@@ -91,11 +91,11 @@ defmodule TriggersWeb.AuthPlugs do
     expires_at == nil || is_past?(parse_time(expires_at))
   end
 
-  defp is_past?(time), do: Timex.before?(time, Timex.now())
+  defp is_past?(time), do: Timex.before?(time, H.now())
 
   defp parse_time(string), do: Timex.parse!(string, "{ISO:Extended}")
 
   defp new_expiration_string do
-    Timex.now() |> Timex.shift(days: +1) |> Timex.format!("{ISO:Extended}")
+    H.now() |> Timex.shift(days: +1) |> Timex.format!("{ISO:Extended}")
   end
 end

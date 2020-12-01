@@ -2,13 +2,12 @@ defmodule Triggers.Data.TriggerInstance do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
-  alias Triggers.Data
 
   schema "trigger_instances" do
     belongs_to :trigger, Triggers.Data.Trigger
     field :due_at, :utc_datetime
-    field :resolved_at
-    field :status, :text
+    field :resolved_at, :utc_datetime
+    field :status, :string
     timestamps()
   end
 

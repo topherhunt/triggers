@@ -1,4 +1,8 @@
 defmodule Triggers.Nagger do
+  import Ecto.Query
+  alias Triggers.Repo
+  alias Triggers.Data.{Trigger, User}
+
   def send_nags do
     users = User |> Repo.all() |> Enum.filter(& !asleep?(&1))
 
@@ -9,11 +13,13 @@ defmodule Triggers.Nagger do
         |> Repo.all()
         |> Enum.sort_by(& Trigger.next_instance_timestamp(&1))
 
-      Triggers.Emails.nag(user, triggers) |> Triggers.Mailer.send()
+      if length(triggers) > 0 do
+        Triggers.Emails.nag(user, triggers) |> Triggers.Mailer.send()
+      end
     end
   end
 
-  defp asleep?(_user) do
+  def asleep?(_user) do
     hour = DateTime.utc_now().hour
     hour >= 23 || hour <= 8
   end

@@ -1,6 +1,6 @@
 
 <div class="float-right">
-  <%= if too_many_new_triggers?(@triggers) %>
+  <%= if too_many_new_triggers?(@triggers) do %>
     <%= link "+ New trigger", to: Routes.trigger_path(@conn, :new), "data-confirm": "Whoa there! 🐎🤠 You've already added some triggers today. This tool works best when you build up your routine gradually. Are you sure you want to add another?" %>
   <% else %>
     <%= link "+ New trigger", to: Routes.trigger_path(@conn, :new) %>
@@ -11,11 +11,7 @@
 
 <table class="table">
   <%= for trigger <- @triggers do %>
-    <% past_instances =
-      trigger.instances
-      |> Enum.filter(& &1.status != nil)
-      |> Enum.sort(& -DateTime.to_unix(&1.resolved_at))
-      |> Enum.take(14) %>
+    <% past_instances = get_latest_resolved_instances(trigger, 14) %>
     <% next_instance = Trigger.next_instance(trigger) %>
     <tr>
       <td>
@@ -27,17 +23,26 @@
         </div>
       </td>
 
-      <td class="<%= if due_now?(next_instance), do: "text-danger" %>">
-        <%= H.print_datetime(next_instance.due_at) %>
+      <td>
+        <div class="<%= if due_now?(next_instance), do: "text-danger" %>">
+          <%= H.print_datetime(next_instance.due_at) %>
+        </div>
+        <%= if trigger.repeat_in_unit do %>
+          <small>🔁 every <%= trigger.repeat_in %> <%= trigger.repeat_in_unit %>s</small>
+        <% end %>
       </td>
 
       <td>
         <%= if due_by_today?(next_instance) do %>
-          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :respond, next_instance.id, status: "done"), class: "btn btn-success btn-sm", return_to: "upcoming" %> &nbsp;
-          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :respond, next_instance.id, status: "wont_do"), class: "btn btn-danger btn-sm", return_to: "upcoming" %> &nbsp;
+          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done"), class: "btn btn-success btn-sm", return_to: "upcoming" %> &nbsp;
+          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "wont_do"), class: "btn btn-danger btn-sm", return_to: "upcoming" %> &nbsp;
         <% end %>
         <%= link "details", to: Routes.trigger_path(@conn, :show, trigger) %>
       </td>
     </tr>
   <% end %>
 </table>
+
+<%= if length(@triggers) == 0 do %>
+  <div class="em text-muted">Nothing to see here yet. Click on New Trigger to get started.</div>
+<% end %>

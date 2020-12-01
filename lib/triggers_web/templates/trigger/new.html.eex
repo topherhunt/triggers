@@ -1,3 +1,4 @@
-<h3>New trigger</h3>
-
-<%= render "_form.html", changeset: @changeset, method: :post, path: Routes.trigger_path(@conn, :create) %>
+<div class="w-600px mx-auto">
+  <h3>New trigger</h3>
+  <%= render "_form.html", changeset: @changeset, method: :post, path: Routes.trigger_path(@conn, :create) %>
+</div>

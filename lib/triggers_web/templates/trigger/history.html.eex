@@ -10,3 +10,7 @@
     </tr>
   <% end %>
 </table>
+
+<%= if length(@instances) == 0 do %>
+  <div class="em text-muted">Nothing to see here yet. Go to Upcoming -> New Trigger to get started.</div>
+<% end %>

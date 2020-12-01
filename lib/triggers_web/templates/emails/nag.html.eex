@@ -1,14 +1,18 @@
-<h3>You have <%= length(@triggers) %> due triggers.</h3>
+<div style="font-family: sans-serif;">
+  <h3>⏰ You have <%= length(@triggers) %> due triggers. ⏰</h3>
 
-<p><strong><%= link "See all", to: Routes.trigger_url(TriggersWeb.Endpoint, :upcoming) %></strong></p>
+  <ul>
+    <%= for trigger <- @triggers do %>
+      <% next_instance = Trigger.next_instance(trigger) %>
+      <li style="margin-bottom: 1rem;">
+        <%= trigger.title %><br>
+        <small>
+          <%= H.print_datetime(next_instance.due_at, "%I:%M %P") %> &nbsp;
+          <%= link "details", to: Routes.trigger_url(TriggersWeb.Endpoint, :show, trigger) %>
+        </small>
+      </li>
+    <% end %>
+  </ul>
 
-<table>
-  <%= for trigger <- @triggers do %>
-    <% next_instance = Trigger.next_instance(trigger) %>
-    <tr>
-      <td><%= trigger.title %></td>
-      <td><%= H.print_datetime(next_instance.due_at) %></td>
-      <td><%= link "details", to: Routes.trigger_url(TriggersWeb.Endpoint, :show, trigger) %></td>
-    </tr>
-  <% end %>
-</table>
+  <p><strong><%= link "See all", to: Routes.trigger_url(TriggersWeb.Endpoint, :upcoming) %></strong></p>
+</div>
