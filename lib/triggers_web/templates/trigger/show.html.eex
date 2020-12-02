@@ -1,6 +1,6 @@
 <div>
   <span class="h3"><%= @trigger.title %></span> &nbsp;
-  <%= link "edit", to: Routes.trigger_path(@conn, :edit, @trigger) %>
+  <%= link raw("<i class='icon'>edit</i>"), to: Routes.trigger_path(@conn, :edit, @trigger) %>
 </div>
 
 <div class="row">
@@ -22,7 +22,7 @@
       <%= for instance <- @past_instances do %>
         <tr>
           <td><%= H.print_date(instance.resolved_at) %></td>
-          <td><%= instance.status %></td>
+          <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
         </tr>
       <% end %>
     </table>
@@ -42,7 +42,7 @@
         <td><strong>Repeats</strong></td>
         <td>
           <%= if @trigger.repeat_in do %>
-            every <%= @trigger.repeat_in %> <%= @trigger.repeat_in_unit %>s
+            🔁 every <%= @trigger.repeat_in %> <%= @trigger.repeat_in_unit %>s
           <% else %>
             no
           <% end %>

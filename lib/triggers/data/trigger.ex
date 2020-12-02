@@ -90,9 +90,9 @@ defmodule Triggers.Data.Trigger do
   end
 
   def add_repeat_interval(date, %__MODULE__{} = trigger) do
-    case trigger.repeat_in do
-      "day" -> date |> Timex.shift(days: trigger.repeat_in_unit)
-      "month" -> date |> Timex.shift(months: trigger.repeat_in_unit)
+    case trigger.repeat_in_unit do
+      "day" -> date |> Timex.shift(days: trigger.repeat_in)
+      "month" -> date |> Timex.shift(months: trigger.repeat_in)
     end
   end
 

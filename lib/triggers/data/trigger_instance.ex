@@ -33,6 +33,8 @@ defmodule Triggers.Data.TriggerInstance do
     Enum.reduce(filters, orig_query, fn {k, v}, query -> filter(query, k, v) end)
   end
 
+  def filter(query, :id, id), do: where(query, [i], i.id == ^id)
+
   def filter(query, :user, user) do
     where(query, [i], fragment("EXISTS (SELECT * FROM triggers t WHERE t.id = ? AND t.user_id = ?)", i.trigger_id, ^user.id))
   end

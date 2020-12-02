@@ -9,14 +9,29 @@
 
 <h3>Active triggers</h3>
 
-<table class="table">
+<table class="table w-auto">
   <%= for trigger <- @triggers do %>
     <% past_instances = get_latest_resolved_instances(trigger, 14) %>
     <% next_instance = Trigger.next_instance(trigger) %>
     <tr>
+
+      <td>
+        <div class="<%= if due_now?(next_instance), do: "text-danger" %>">
+          <%= if H.to_date(next_instance.due_at) == H.today() do %>
+            <%= H.print_time(next_instance.due_at) %>
+          <% else %>
+            <%= H.print_date(next_instance.due_at) %>
+          <% end %>
+        </div>
+
+        <!-- <%= if trigger.repeat_in_unit do %>
+          <div class="small u-tooltip-target">🔁<div class="u-tooltip">every <%= trigger.repeat_in %> <%= trigger.repeat_in_unit %>s</div></div>
+        <% end %> -->
+      </td>
+
       <td>
         <%= trigger.title %>
-        <div>
+        <div class="mt-n1">
           <%= for i <- past_instances do %>
             <div class="resolved-bubble --<%= i.status %>"></div>
           <% end %>
@@ -24,20 +39,16 @@
       </td>
 
       <td>
-        <div class="<%= if due_now?(next_instance), do: "text-danger" %>">
-          <%= H.print_datetime(next_instance.due_at) %>
-        </div>
-        <%= if trigger.repeat_in_unit do %>
-          <small>🔁 every <%= trigger.repeat_in %> <%= trigger.repeat_in_unit %>s</small>
+        <%= if due_by_today?(next_instance) do %>
+          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "btn btn-success btn-sm" %> &nbsp;
+          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "wont_do", return_to: "upcoming"), class: "btn btn-danger btn-sm" %> &nbsp;
+        <% else %>
+          <span class="text-muted">not due yet</span>
         <% end %>
       </td>
-
       <td>
-        <%= if due_by_today?(next_instance) do %>
-          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done"), class: "btn btn-success btn-sm", return_to: "upcoming" %> &nbsp;
-          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "wont_do"), class: "btn btn-danger btn-sm", return_to: "upcoming" %> &nbsp;
-        <% end %>
-        <%= link "details", to: Routes.trigger_path(@conn, :show, trigger) %>
+        <%= link "details", to: Routes.trigger_path(@conn, :show, trigger) %> &nbsp;
+        <%= link raw("<i class='icon'>edit</i>"), to: Routes.trigger_path(@conn, :edit, trigger) %>
       </td>
     </tr>
   <% end %>

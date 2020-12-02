@@ -3,10 +3,14 @@
 <table class="table w-auto">
   <%= for instance <- @instances do %>
     <tr>
+      <td><%= H.print_date(instance.resolved_at) %></td>
+      <td><%= H.print_time(instance.resolved_at) %></td>
       <td><%= instance.trigger.title %></td>
-      <td><%= H.print_datetime(instance.resolved_at) %></td>
       <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
-      <td><%= link "details", to: Routes.trigger_path(@conn, :show, instance.trigger) %></td>
+      <td>
+        <%= link "details", to: Routes.trigger_path(@conn, :show, instance.trigger) %> &nbsp;
+        <%= link raw("<i class='icon'>edit</i>"), to: Routes.trigger_path(@conn, :edit, instance.trigger) %>
+      </td>
     </tr>
   <% end %>
 </table>
