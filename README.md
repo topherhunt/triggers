@@ -12,4 +12,4 @@ How to branch a new app based on this triggers template:
 
 ## Production
 
-Deployed on Heroku: https://triggers-prod.herokuapp.com/
+Deployed on Heroku: triggers-prod.herokuapp.com aka triggers.topherhunt.com

@@ -46,7 +46,7 @@ defmodule Triggers.Emails do
 
   defp standard_email do
     new_email()
-    |> from({"Triggers", "noreply@triggers.com"})
+    |> from({"Triggers", "noreply@triggers.topherhunt.com"})
     |> put_html_layout({TriggersWeb.LayoutView, "email.html"})
   end
 end
