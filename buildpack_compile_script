@@ -1,0 +1,13 @@
+# See https://hexdocs.pm/phoenix/heroku.html#adding-the-phoenix-static-buildpack
+
+npm run deploy
+cd $phoenix_dir
+mix "${phoenix_ex}.digest"
+
+# You can simulate production assets locally by running:
+# $ rm -rf priv/static/
+# $ npm run deploy --prefix assets/
+# $ mix phx.digest
+# $ MIX_ENV=prod mix phx.server
+#
+# Or just: WEBPACK_ENV=production mix phx.server

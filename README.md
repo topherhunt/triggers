@@ -8,3 +8,8 @@ How to branch a new app based on this triggers template:
   * `mix ecto.create`
   * `mix ecto.migrate`
   * `mix test` - around 30 tests should run; all should pass
+
+
+## Production
+
+Deployed on Heroku: https://triggers-prod.herokuapp.com/

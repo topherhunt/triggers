@@ -15,7 +15,7 @@ defmodule Triggers.Helpers do
 
   def invert_map(map), do: Map.new(map, fn {k, v} -> {v, k} end)
 
-  # Example: H.try(user_maybe_nil, :field)
+  # Example: H.try(user_struct_or_nil, :field)
   def try(nil, _), do: nil
   def try(%{} = map, field), do: Map.get(map, field)
 
@@ -60,6 +60,8 @@ defmodule Triggers.Helpers do
   # Dates
   #
 
+  def today, do: Date.utc_today()
+
   def to_date(nil), do: nil
   def to_date(%DateTime{} = dt), do: DateTime.to_date(dt)
   def to_date(%NaiveDateTime{} = dt), do: DateTime.to_date(dt)
@@ -76,11 +78,11 @@ defmodule Triggers.Helpers do
   # Returns A or B, whichever is later.
   def floor_date(%Date{} = a, %Date{} = b), do: if date_gt?(a, b), do: a, else: b
 
-  def today, do: Date.utc_today()
-
   #
   # Datetimes
   #
+
+  def now, do: DateTime.utc_now()
 
   def datetime_gt?(a, b), do: DateTime.compare(a, b) == :gt # returns true if A > B
   def datetime_lt?(a, b), do: DateTime.compare(a, b) == :lt # returns true if A < B
@@ -99,8 +101,6 @@ defmodule Triggers.Helpers do
 
   def mins_ago(n) when is_integer(n), do: now() |> Timex.shift(minutes: -n)
   def in_mins(n) when is_integer(n), do: now() |> Timex.shift(minutes: n)
-
-  def now, do: DateTime.utc_now()
 
   #
   # Datetime formatting
