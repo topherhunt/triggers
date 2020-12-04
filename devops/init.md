@@ -1,11 +1,5 @@
 # How to set up a new VPS deployment
 
-
-
-NOTE: I've dropped this approach. Too much busywork. I'll stick with Heroku. The last straw was realizing that I'll still need to manually swap in LetsEncrypt certs every 3 months or so.
-
-
-
 * Create a Scaleway or DigitalOcean instance.
 
 * Give it an alias in `~/.ssh/config`, eg. `triggers-prod`.
@@ -14,6 +8,10 @@ NOTE: I've dropped this approach. Too much busywork. I'll stick with Heroku. The
 * SSH into it
 
 * `sudo apt-get update && sudo apt-get upgrade -y`
+
+* Install Erlang build dependencies: `sudo apt-get install -y build-essential automake libncurses5-dev libssl-dev unzip`
+
+* Install npm package dependencies: `sudo apt-get install -y python-minimal`
 
 * Install Postgres:
   (use `mix phx.gen.secret` to generate the password; note it in `secrets.exs`)
@@ -36,7 +34,6 @@ sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGI
   - `asdf plugin-add elixir`
   - `asdf plugin-add erlang` (see https://asdf-vm.com/#/core-manage-asdf?id=asdf)
   - `asdf plugin-add nodejs`
-  - `sudo apt-get install -y build-essential automake libncurses5-dev libssl-dev unzip` (Note: this omits some build components such as wx, odbc, and documentation, but building with all those components takes longer & takes more memory.)
 
 * `asdf install`
   - I can work on `secrets.exs` while it's building Erlang
@@ -58,8 +55,10 @@ sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGI
   - `sudo certbot certonly --standalone` (ensure the webserver is stopped first)
 
 * Forward traffic from ports 80 and 443 to 4000 where Phoenix can listen for it:
-  - (see also my cheatsheet `networks.md`)
   - `sudo iptables -t nat -I PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 4000`
+  - To list all routing rules: `sudo iptables -t nat --list --line-numbers`
+  - To delete / disable a rule: `sudo iptables -t nat -D PREROUTING 1`
+  - See also my cheatsheet `networks.md`
 
 * Start the production app
   - `npm install --prefix assets/`
@@ -73,6 +72,7 @@ sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGI
   - eg. on Namecheap, I added an A record for triggers.topherhunt.com -> the server IP
   - [TODO] set the app port to listen on 443? Or is this already configured?
 
+* Set up Papertrail log capture
 
 
 
@@ -96,6 +96,11 @@ sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGI
 
 * Add an UptimeRobot monitor
 
+
+## How to renew the LetsEncrypt certificate
+
+* `sudo certbot renew --dry-run`
+* Copy the certfiles into the locations specified in the Phoenix config
 
 
 ## Useful references:
