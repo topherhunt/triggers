@@ -64,7 +64,7 @@ defmodule Triggers.Helpers do
 
   def to_date(nil), do: nil
   def to_date(%DateTime{} = dt), do: DateTime.to_date(dt)
-  def to_date(%NaiveDateTime{} = dt), do: DateTime.to_date(dt)
+  def to_date(%NaiveDateTime{} = dt), do: NaiveDateTime.to_date(dt)
 
   def date_gt?(a, b), do: Date.compare(a, b) == :gt # returns true if A > B
   def date_lt?(a, b), do: Date.compare(a, b) == :lt # returns true if A < B
