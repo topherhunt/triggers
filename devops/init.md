@@ -5,6 +5,8 @@
 * Give it an alias in `~/.ssh/config`, eg. `triggers-prod`.
   (Use the `ubuntu` account, not `root`!)
 
+* Point my domain/subdomain to this instance's IP (an `A` record should be enough)
+
 * SSH into it
 
 * `sudo apt-get update && sudo apt-get upgrade -y`
@@ -53,6 +55,9 @@ sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGI
   - `sudo snap install --classic certbot`
   - `sudo ln -s /snap/bin/certbot /usr/bin/certbot`
   - `sudo certbot certonly --standalone` (ensure the webserver is stopped first)
+  -
+  - See also: https://phoenixframework.readme.io/docs/configuration-for-ssl
+  - See also: https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html#https/3
 
 * Forward traffic from ports 80 and 443 to 4000 where Phoenix can listen for it:
   - `sudo iptables -t nat -I PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 4000`
@@ -68,9 +73,7 @@ sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGI
   - `MIX_ENV=prod mix ecto.migrate`
   - `MIX_ENV=prod mix phx.server`
 
-* Set up the domain:
-  - eg. on Namecheap, I added an A record for triggers.topherhunt.com -> the server IP
-  - [TODO] set the app port to listen on 443? Or is this already configured?
+
 
 * Set up Papertrail log capture
 
