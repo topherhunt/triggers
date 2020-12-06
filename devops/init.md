@@ -45,6 +45,7 @@ sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGI
 * Write `secrets.exs` which sets all production env vars
   - set up SMTP email sending credentials (eg. from a Mailgun account)
   - set up a Rollbar account if needed, and add that ROLLBAR_ACCESS_TOKEN
+  - Set `SSL_KEYFILE_PATH` (to privkey.pem) and `SSL_CERTFILE_PATH` (to fullchain.pem)
 
 * `mix deps.get && MIX_ENV=prod mix compile`
   - Ensure no compile errors
@@ -55,12 +56,13 @@ sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGI
   - `sudo snap install --classic certbot`
   - `sudo ln -s /snap/bin/certbot /usr/bin/certbot`
   - `sudo certbot certonly --standalone` (ensure the webserver is stopped first)
-  -
+  - `sudo chown -R ubuntu /etc/letsencrypt/` (ensure the ubuntu user can see the cert files)
+  - In `config/secrets.exs`, set `SSL_KEYFILE_PATH` (to privkey.pem) and `SSL_CERTFILE_PATH` (points to fullchain.pem). Example path: `/etc/letsencrypt/live/triggers.topherhunt.com/privkey.pem`
   - See also: https://phoenixframework.readme.io/docs/configuration-for-ssl
   - See also: https://hexdocs.pm/plug_cowboy/Plug.Cowboy.html#https/3
 
-* Forward traffic from ports 80 and 443 to 4000 where Phoenix can listen for it:
-  - `sudo iptables -t nat -I PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 4000`
+* Forward traffic from ports 80 and 443 to 4001 where Phoenix can listen for it:
+  - `sudo iptables -t nat -I PREROUTING -p tcp --dport 443 -j REDIRECT --to-ports 4001`
   - To list all routing rules: `sudo iptables -t nat --list --line-numbers`
   - To delete / disable a rule: `sudo iptables -t nat -D PREROUTING 1`
   - See also my cheatsheet `networks.md`

@@ -13,12 +13,13 @@ config :triggers, Triggers.Repo,
 # before starting your production server.
 config :triggers, TriggersWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT") || 4000],
-  url: [scheme: "https", host: H.env!("HOST_NAME"), port: 443],
+  url: [scheme: "https", host: H.env!("HOST_NAME"), port: 4001],
+  # The webserver listens at port 4001 so we don't need to run it as root.
   https: [
-    port: 443,
+    port: 4001,
     otp_app: :triggers_web,
-    keyfile: System.get_env("SSL_KEYFILE_PATH"), # privkey
-    certfile: System.get_env("SSL_CERTFILE_PATH") # fullchain
+    keyfile: System.get_env("SSL_KEYFILE_PATH"), # points to privkey.pem
+    certfile: System.get_env("SSL_CERTFILE_PATH") # points to fullchain.pem
     # cacertfile: System.get_env("SSL_INTERMEDIATE_CERTFILE_PATH")
   ],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
