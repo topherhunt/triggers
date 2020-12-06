@@ -1,46 +1,46 @@
-# How to set up a new VPS deployment
+# Steps to deploy a Phoenix app to a new Scaleway VPS
+
 
 * Create a Scaleway or DigitalOcean instance.
 
 * Give it an alias in `~/.ssh/config`, eg. `triggers-prod`.
-  (Use the `ubuntu` account, not `root`!)
+  (NOTE: The following steps use the `ubuntu` user, not `root`. I could adjust these steps to only access the server as `root`, which lets us bypass the port forwarding and certfile chmod steps.)
 
 * Point my domain/subdomain to this instance's IP (an `A` record should be enough)
 
 * SSH into it
 
-* `sudo apt-get update && sudo apt-get upgrade -y`
+```sh
+sudo apt-get update && sudo apt-get upgrade -y
+# Erlang dependencies
+sudo apt-get install -y build-essential automake libncurses5-dev libssl-dev unzip
+# NPM dependencies
+sudo apt-get install -y python-minimal
 
-* Install Erlang build dependencies: `sudo apt-get install -y build-essential automake libncurses5-dev libssl-dev unzip`
-
-* Install npm package dependencies: `sudo apt-get install -y python-minimal`
-
-* Install Postgres:
-  (use `mix phx.gen.secret` to generate the password; note it in `secrets.exs`)
-
-```
+# Install Postgres
+# NOTE: Use `mix phx.gen.secret` to generate the password; note it in `config/secrets.exs`
 sudo apt-get install -y postgresql-10
 createdb $(whoami)
-sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGIN PASSWORD 'replace_me';"
+sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGIN PASSWORD 'REPLACE_ME';"
+
+# Create a Github deploy key for this repo, and paste in the key generated below:
+ssh-keygen -t ed25519 -C "triggers-prod@localhost"
+cat ~/.ssh/id_ed25519.pub
+
+# Clone the repo
+git clone GITHUB_REPO_URL
+cd MY_REPO_FOLDER
+
+# Install asdf:
+# * Follow steps at: https://asdf-vm.com/#/core-manage-asdf
+asdf plugin-add elixir
+asdf plugin-add erlang
+asdf plugin-add nodejs
+# Erlang build takes a while, so I can start writing secrets.exs while I'm waiting.
+asdf install
+# * Check for errors and check that the correct versions are installed. If Erlang build
+#   showed OpenSSL-related errors, see https://github.com/asdf-vm/asdf-erlang and fix.
 ```
-
-* Add Github deploy key
-  - generate a key for the server: https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key
-  - create a Github deploy key for that pubfile & for this repo
-
-* `git clone GITHUB_REPO_URL` (into a folder under home, eg. `~/triggers/`)
-
-* `cd MY_REPO_FOLDER`
-
-* Install `asdf`:
-  - `asdf plugin-add elixir`
-  - `asdf plugin-add erlang` (see https://asdf-vm.com/#/core-manage-asdf?id=asdf)
-  - `asdf plugin-add nodejs`
-
-* `asdf install`
-  - I can work on `secrets.exs` while it's building Erlang
-  - Ensure building Erlang didn't fail in any important ways, eg. OpenSSL errors
-  - Ensure `node -v` returns right version (see https://github.com/asdf-vm/asdf-nodejs)
 
 * Write `secrets.exs` which sets all production env vars
   - set up SMTP email sending credentials (eg. from a Mailgun account)
@@ -75,18 +75,19 @@ sudo -u postgres psql -d postgres -c "CREATE ROLE ubuntu SUPERUSER CREATEDB LOGI
   - `MIX_ENV=prod mix ecto.migrate`
   - `MIX_ENV=prod mix phx.server`
 
-
-
 * Set up Papertrail log capture
-
-
-
-...
+  - Ensure the prod server writes logs to log/prod.log
+  - Set up a Papertrail account
+  - Install Papertrail's remote_syslog (see https://papertrailapp.com/systems/setup?type=app&platform=unix)
+  - Start the remote_syslog service
+  - TODO: Should I configure remote_syslog to autostart on reboot?
+  - Ensure logs are appearing in Papertrail
 
 * Set up an UptimeRobot monitor
 
 * Smoke-test that everything is wired up
   - Site is reachable
+  - http:// access redirects to https://
   - Emails are sent correctly
   - Backend errors are reported to Rollbar
   - Frontend JS errors are reported to Rollbar

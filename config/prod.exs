@@ -13,15 +13,7 @@ config :triggers, Triggers.Repo,
 # before starting your production server.
 config :triggers, TriggersWeb.Endpoint,
   http: [:inet6, port: System.get_env("PORT") || 4000],
-  url: [scheme: "https", host: H.env!("HOST_NAME"), port: 4001],
-  # The webserver listens at port 4001 so we don't need to run it as root.
-  https: [
-    port: 4001,
-    otp_app: :triggers_web,
-    keyfile: System.get_env("SSL_KEYFILE_PATH"), # points to privkey.pem
-    certfile: System.get_env("SSL_CERTFILE_PATH") # points to fullchain.pem
-    # cacertfile: System.get_env("SSL_INTERMEDIATE_CERTFILE_PATH")
-  ],
+  url: [scheme: "https", host: H.env!("HOST_NAME"), port: 443],
   force_ssl: [rewrite_on: [:x_forwarded_proto]],
   cache_static_manifest: "priv/static/cache_manifest.json"
   # TODO: Configure check_origin for better LiveDashboard security; see https://hexdocs.pm/phoenix_live_dashboard/Phoenix.LiveDashboard.html
