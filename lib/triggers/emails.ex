@@ -5,6 +5,7 @@ defmodule Triggers.Emails do
   alias TriggersWeb.Router.Helpers, as: Routes
   alias Triggers.Data
   alias Triggers.Data.User
+  alias Triggers.Factory
   require Logger
 
   @endpoint TriggersWeb.Endpoint
@@ -36,7 +37,7 @@ defmodule Triggers.Emails do
 
     standard_email()
     |> to(user.email)
-    |> subject("#{length(triggers)} due triggers: #{preview}")
+    |> subject("#{length(triggers)} due triggers: #{preview} - #{Factory.random_uuid()}")
     |> render("nag.html", triggers: triggers)
   end
 
