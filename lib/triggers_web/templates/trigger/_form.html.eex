@@ -10,16 +10,16 @@
   </div>
 
   <div class="form-group">
+    <%= label f, :details, "Details about this task" %>
+    <%= textarea f, :details, class: "form-control" %>
+    <%= error_tag f, :details %>
+  </div>
+
+  <div class="form-group">
     <%= label f, :why, "Why?" %> <%= required() %>
     <div class="small text-muted mt-n2">Why is this task worth getting nagged over?</div>
     <%= textarea f, :why, class: "form-control", required: true %>
     <%= error_tag f, :why %>
-  </div>
-
-  <div class="form-group">
-    <%= label f, :details, "Details about this task" %>
-    <%= textarea f, :details, class: "form-control" %>
-    <%= error_tag f, :details %>
   </div>
 
   <div class="form-group">
@@ -44,7 +44,7 @@
         <%= error_tag f, :repeat_in %>
       </div>
       <div class="col">
-        <%= select f, :repeat_in_unit, [{"(don't repeat)", ""}, {"days", "day"}, {"months", "month"}], class: "form-control" %>
+        <%= select f, :repeat_in_unit, [{"(don't repeat)", ""}, {"days", "day"}, {"weeks", "week"}, {"months", "month"}], class: "form-control" %>
         <%= error_tag f, :repeat_in_unit %>
       </div>
     </div>

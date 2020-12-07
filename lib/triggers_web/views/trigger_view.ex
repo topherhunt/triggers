@@ -13,6 +13,10 @@ defmodule TriggersWeb.TriggerView do
     H.datetime_lte?(instance.due_at, DateTime.utc_now())
   end
 
+  def due_on_today?(instance) do
+    H.to_date(instance.due_at) == Date.utc_today()
+  end
+
   def due_by_today?(instance) do
     H.date_lte?(H.to_date(instance.due_at), H.today())
   end

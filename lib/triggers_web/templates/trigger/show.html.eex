@@ -1,53 +1,55 @@
-<div>
-  <span class="h3"><%= @trigger.title %></span> &nbsp;
-  <%= link raw("<i class='icon'>edit</i>"), to: Routes.trigger_path(@conn, :edit, @trigger) %>
-</div>
-
-<div class="row">
-  <div class="col">
-
-    <%= if @next_instance do %>
-      <div class="u-card my-3 text-center">
-        <strong>Due <%= H.print_datetime(@next_instance.due_at) %>.</strong><br>
-        <%= if due_by_today?(@next_instance) do %>
-          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, @next_instance.id, status: "done"), class: "btn btn-success" %> &nbsp;
-          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, @next_instance.id, status: "wont_do"), class: "btn btn-danger" %>
-        <% end %>
-      </div>
-    <% end %>
-
-    <h4>History</h4>
-
-    <table class="table w-auto">
-      <%= for instance <- @past_instances do %>
-        <tr>
-          <td><%= H.print_date(instance.resolved_at) %></td>
-          <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
-        </tr>
-      <% end %>
-    </table>
-
+<div class="mx-auto max-w-600px">
+  <div>
+    <span class="h3"><%= @trigger.title %></span> &nbsp;
+    <%= link raw("<i class='icon'>edit</i>"), to: Routes.trigger_path(@conn, :edit, @trigger) %>
   </div>
-  <div class="col">
-    <table class="table w-auto">
-      <tr>
-        <td><strong>Why?</strong></td>
-        <td><%= @trigger.why %></td>
-      </tr>
-      <tr>
-        <td><strong>Details</strong></td>
-        <td><%= @trigger.details %></td>
-      </tr>
-      <tr>
-        <td><strong>Repeats</strong></td>
-        <td>
+
+  <table class="table mt-3 w-auto">
+    <tr>
+      <td><strong>Details</strong></td>
+      <td><%= @trigger.details %></td>
+    </tr>
+    <tr>
+      <td><strong>Why?</strong></td>
+      <td><%= @trigger.why %></td>
+    </tr>
+    <tr>
+      <td><strong>Due</strong></td>
+      <td>
+        <%= if @next_instance do %>
+          <span class='<%= if due_now?(@next_instance), do: "text-danger" %>'>
+            <%= if due_on_today?(@next_instance) do %>
+              Today <%= H.print_time(@next_instance.due_at) %>
+            <% else %>
+              <%= H.print_datetime(@next_instance.due_at, "%a %b %e, %l:%M %P") %>
+            <% end %>
+          </span>
           <%= if @trigger.repeat_in do %>
-            🔁 every <%= @trigger.repeat_in %> <%= @trigger.repeat_in_unit %>s
-          <% else %>
-            no
+            &nbsp; 🔁 every <%= @trigger.repeat_in %> <%= @trigger.repeat_in_unit %>s
           <% end %>
-        </td>
+
+          <%= if due_by_today?(@next_instance) do %>
+            <div class="mt-2 text-center">
+              <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, @next_instance.id, status: "done"), class: "btn btn-success" %> &nbsp;
+              <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, @next_instance.id, status: "wont_do"), class: "btn btn-danger" %>
+            </div>
+          <% end %>
+        <% else %>
+          <em>Nothing due.</em>
+        <% end %>
+      </td>
+    </tr>
+  </table>
+
+
+  <h4>History</h4>
+
+  <table class="table w-auto">
+    <%= for instance <- @past_instances do %>
+      <tr>
+        <td><%= H.print_date(instance.resolved_at) %></td>
+        <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
       </tr>
-    </table>
-  </div>
+    <% end %>
+  </table>
 </div>

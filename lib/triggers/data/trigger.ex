@@ -24,7 +24,7 @@ defmodule Triggers.Data.Trigger do
     struct
     |> cast(params, [:user_id, :title, :why, :details, :first_due_date, :due_time, :repeat_in, :repeat_in_unit, :last_nagged_at])
     |> validate_required([:user_id, :title, :why, :first_due_date, :due_time])
-    |> validate_inclusion(:repeat_in_unit, ["day", "month"])
+    |> validate_inclusion(:repeat_in_unit, ["day", "week", "month"])
     |> validate_repeat_in_fields()
   end
 
@@ -92,6 +92,7 @@ defmodule Triggers.Data.Trigger do
   def add_repeat_interval(date, %__MODULE__{} = trigger) do
     case trigger.repeat_in_unit do
       "day" -> date |> Timex.shift(days: trigger.repeat_in)
+      "week" -> date |> Timex.shift(weeks: trigger.repeat_in)
       "month" -> date |> Timex.shift(months: trigger.repeat_in)
     end
   end
