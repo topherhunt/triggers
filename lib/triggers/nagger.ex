@@ -2,9 +2,11 @@ defmodule Triggers.Nagger do
   import Ecto.Query
   alias Triggers.Repo
   alias Triggers.Data.{Trigger, User}
+  require Logger
 
   def send_nags do
     users = User |> Repo.all() |> Enum.filter(& !asleep?(&1))
+    log :info, "send_nags starting for #{length(users)} users."
 
     for user <- users do
       triggers =
@@ -23,4 +25,6 @@ defmodule Triggers.Nagger do
     hour = DateTime.utc_now().hour
     hour >= 23 || hour <= 8
   end
+
+  defp log(level, msg), do: Logger.log(level, "Triggers.Nagger: #{msg}")
 end
