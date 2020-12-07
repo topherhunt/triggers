@@ -30,9 +30,9 @@ config :rollbax,
   access_token: H.env!("ROLLBAR_ACCESS_TOKEN"),
   environment: "prod"
 
-config :triggers, Trigger.Scheduler,
+config :triggers, Triggers.Scheduler,
   jobs: [
-    {"*/15 * * * *", Triggers.Nagger, :send_nags, []}
+    {"*/15 * * * *", {Triggers.Nagger, :send_nags, []}}
   ]
 
 # ## SSL Support
