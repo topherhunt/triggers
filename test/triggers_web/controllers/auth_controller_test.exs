@@ -63,7 +63,7 @@ defmodule TriggersWeb.AuthControllerTest do
       params = %{"user" => %{"email" => user.email, "password" => "password"}}
       conn = post(conn, Routes.auth_path(conn, :login_submit), params)
 
-      assert redirected_to(conn) == Routes.page_path(conn, :index)
+      assert redirected_to(conn) == Routes.trigger_path(conn, :upcoming)
       assert_logged_in(conn, user)
     end
 

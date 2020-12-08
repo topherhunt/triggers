@@ -58,7 +58,7 @@ defmodule TriggersWeb.AuthController do
         conn
         |> TriggersWeb.AuthPlugs.login!(user)
         |> put_flash(:info, gettext("Welcome back!"))
-        |> redirect(to: Routes.page_path(conn, :index))
+        |> redirect(to: Routes.trigger_path(conn, :upcoming))
     end
   end
 

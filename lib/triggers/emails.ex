@@ -5,7 +5,6 @@ defmodule Triggers.Emails do
   alias TriggersWeb.Router.Helpers, as: Routes
   alias Triggers.Data
   alias Triggers.Data.User
-  alias Triggers.Factory
   require Logger
 
   @endpoint TriggersWeb.Endpoint
@@ -37,7 +36,7 @@ defmodule Triggers.Emails do
 
     standard_email()
     |> to(user.email)
-    |> subject("#{length(triggers)} due triggers: #{preview} - #{Factory.random_uuid()}")
+    |> subject("#{length(triggers)} due triggers: #{preview}  #{random_string()}")
     |> render("nag.html", triggers: triggers)
   end
 
@@ -49,5 +48,10 @@ defmodule Triggers.Emails do
     new_email()
     |> from({"Triggers", "noreply@triggers.topherhunt.com"})
     |> put_html_layout({TriggersWeb.LayoutView, "email.html"})
+  end
+
+  def random_string do
+    Enum.map(1..3, fn _ -> Enum.random(~w(· ° ¯ - _ ¤ « » ‹ › • — ░ ▒ ▓ █ ▄ ▀ ■)) end)
+    |> Enum.join("")
   end
 end

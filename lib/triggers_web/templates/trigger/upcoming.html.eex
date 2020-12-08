@@ -44,7 +44,8 @@
           <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "btn btn-success btn-sm" %> &nbsp;
           <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "wont_do", return_to: "upcoming"), class: "btn btn-danger btn-sm" %> &nbsp;
         <% else %>
-          <span class="text-muted">not due yet</span>
+          <span class="text-muted">not due yet</span> &nbsp;
+          <%= link "mark done", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "small" %>
         <% end %>
       </td>
       <td>
