@@ -14,15 +14,15 @@ defmodule Triggers.Data.Trigger do
     field :details, :string
     field :first_due_date, :date
     field :due_time, :time
-    field :repeat_in, :integer
     field :repeat_in_unit, :string
+    field :repeat_in, :integer
     field :last_nagged_at, :utc_datetime
     timestamps()
   end
 
   def changeset(struct, params, :admin) do
     struct
-    |> cast(params, [:user_id, :title, :why, :details, :first_due_date, :due_time, :repeat_in, :repeat_in_unit, :last_nagged_at])
+    |> cast(params, [:user_id, :title, :why, :details, :first_due_date, :due_time, :repeat_in_unit, :repeat_in, :last_nagged_at])
     |> validate_required([:user_id, :title, :why, :first_due_date, :due_time])
     |> validate_inclusion(:repeat_in_unit, ["day", "week", "month"])
     |> validate_repeat_in_fields()
@@ -30,7 +30,7 @@ defmodule Triggers.Data.Trigger do
 
   def changeset(struct, params, :owner) do
     struct
-    |> cast(params, [:title, :why, :details, :first_due_date, :due_time, :repeat_in, :repeat_in_unit])
+    |> cast(params, [:title, :why, :details, :first_due_date, :due_time, :repeat_in_unit, :repeat_in])
     |> changeset(%{}, :admin) # now do the standard validations & data prep steps
   end
 

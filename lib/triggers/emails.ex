@@ -3,6 +3,7 @@ defmodule Triggers.Emails do
   import Bamboo.Email
   import TriggersWeb.Gettext
   alias TriggersWeb.Router.Helpers, as: Routes
+  alias Triggers.Helpers, as: H
   alias Triggers.Data
   alias Triggers.Data.User
   require Logger
@@ -32,11 +33,12 @@ defmodule Triggers.Emails do
   end
 
   def nag(user, triggers) do
+    emojis = H.random_emojis(~w(⏰ 📅 📆 ⏱ ✏️ 📝 ⌨️ 🧘‍♀️ 🏃‍♀️ 🚴 ✓ ☑ ✅ 💼 🤹‍♂️), 3)
     preview = triggers |> Enum.map(& &1.title) |> Enum.join(", ") |> String.slice(0..100)
 
     standard_email()
     |> to(user.email)
-    |> subject("#{length(triggers)} due triggers: #{preview}  #{random_string()}")
+    |> subject("#{emojis} #{length(triggers)} due triggers: #{preview}")
     |> render("nag.html", triggers: triggers)
   end
 
@@ -48,10 +50,5 @@ defmodule Triggers.Emails do
     new_email()
     |> from({"Triggers", "noreply@triggers.topherhunt.com"})
     |> put_html_layout({TriggersWeb.LayoutView, "email.html"})
-  end
-
-  def random_string do
-    Enum.map(1..3, fn _ -> Enum.random(~w(· ° ¯ - _ ¤ « » ‹ › • — ░ ▒ ▓ █ ▄ ▀ ■)) end)
-    |> Enum.join("")
   end
 end

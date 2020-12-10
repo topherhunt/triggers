@@ -48,6 +48,10 @@ defmodule Triggers.Helpers do
   def to_atom(nil), do: nil
   def to_atom(string), do: String.to_atom(string)
 
+  def random_emojis(list, n) do
+    (1..n) |> Enum.map(fn _ -> Enum.random(list) end) |> Enum.join("")
+  end
+
   #
   # Integers
   #

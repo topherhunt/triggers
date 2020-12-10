@@ -100,7 +100,7 @@ defmodule TriggersWeb.TriggerController do
     end
 
     conn
-    |> put_flash(:info, (if status == "done", do: "🎉💃🐱", else: "😕"))
+    |> put_flash(:info, (if status == "done", do: happy(), else: sad()))
     |> redirect(to: return_to)
   end
 
@@ -111,4 +111,8 @@ defmodule TriggersWeb.TriggerController do
   defp load_trigger(conn, id) do
     Trigger.filter(user: conn.assigns.current_user, id: id) |> Repo.one!()
   end
+
+  defp happy, do: H.random_emojis(~w(🎉 🎊 👯‍♀️ 🥳 💃 😎 😽 🤓 🐮 🐴 🐱 🐶), 3)
+
+  defp sad, do: H.random_emojis(~w(😕 🤥 😐 🤕), 1)
 end
