@@ -17,7 +17,7 @@
 
   <div class="form-group">
     <%= label f, :why, "Why?" %> <%= required() %>
-    <div class="small text-muted mt-n2">Why is this task worth getting nagged over?</div>
+    <div class="small text-muted mt-n2">Why is this task worth getting nagged over? <%= link icon("video_library"), to: "https://youtu.be/d4ftmOI5NnI?t=74", target: "_blank" %></div>
     <%= textarea f, :why, class: "form-control", required: true %>
     <%= error_tag f, :why %>
   </div>
@@ -40,7 +40,7 @@
     <div>Repeat every...</div>
     <div class="row">
       <div class="col">
-        <%= number_input f, :repeat_in, class: "form-control" %>
+        <%= number_input f, :repeat_in, class: "form-control", placeholder: "123" %>
         <%= error_tag f, :repeat_in %>
       </div>
       <div class="col">

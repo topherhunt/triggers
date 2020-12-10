@@ -43,7 +43,7 @@ defmodule TriggersWeb.TriggerController do
   end
 
   def new(conn, _params) do
-    changeset = Trigger.changeset(%Trigger{}, %{}, :owner)
+    changeset = Trigger.changeset(%Trigger{}, %{first_due_date: H.today(), due_time: H.now()}, :owner)
     render(conn, "new.html", changeset: changeset)
   end
 

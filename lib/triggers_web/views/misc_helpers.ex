@@ -8,4 +8,8 @@ defmodule TriggersWeb.MiscHelpers do
   def if_path(conn, substring, result) do
     if String.contains?(conn.request_path, substring), do: result
   end
+
+  def icon(type, text \\ "") do
+    Phoenix.HTML.raw "<i class='icon'>#{type}</i> #{text}"
+  end
 end

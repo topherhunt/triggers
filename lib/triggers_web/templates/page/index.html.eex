@@ -1,8 +1,22 @@
-<h1 class="text-center">Triggers</h1>
+<div class="mx-auto max-w-600px">
+  <h1 class="text-center">Triggers</h1>
 
-<div class="em text-center text-muted">
-  That's the wonderful thing about Triggers<br>
-  Is that Triggers are wonderful things<br>
-  Their bottoms are made out of rubber<br>
-  Their tops are made out of springs...
+  <div class="em text-center text-muted pt-2">
+    That's the wonderful thing about Triggers<br>
+    Is that Triggers are wonderful things<br>
+    Their bottoms are made out of rubber<br>
+    Their tops are made out of springs... <%= link "♫", to: "https://www.youtube.com/watch?v=dJFyz73MRcg&t=13s", target: "_blank" %>
+  </div>
+
+  <div class="pt-4">
+    This app is built for people who are clear on what they <em>should</em> be doing, but have a hard time <em>getting around to it</em>. If you're like me, you'll spend all day Being Busy And Nominally Productive, but at the end of the day realize that you never got around to the stuff that in retrospect seems the most important.
+  </div>
+
+  <ol class="pt-3">
+    <li>Sign up</li>
+    <li>Add any (routine or one-time) tasks that you want to get done, and by when.</li>
+    <li>We'll nag you by email when it's time to do it.</li>
+    <li>Click "<strong class="text-success">Done</strong>" once you've done it, or "<strong class="text-danger">Won't Do</strong>" to skip the task this time around.</li>
+    <li>Until you mark your due tasks as done/won't-do, <strong>we'll nag you every 15 minutes</strong> by email. The goal is to make procrastination <em>more painful</em> than just doing the thing (or deciding that you realistically won't today).</li>
+  </ol>
 </div>

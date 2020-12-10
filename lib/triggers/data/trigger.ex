@@ -14,8 +14,8 @@ defmodule Triggers.Data.Trigger do
     field :details, :string
     field :first_due_date, :date
     field :due_time, :time
-    field :repeat_in_unit, :string
-    field :repeat_in, :integer
+    field :repeat_in_unit, :string # eg. "day"
+    field :repeat_in, :integer     # eg. 3
     field :last_nagged_at, :utc_datetime
     timestamps()
   end
@@ -35,12 +35,18 @@ defmodule Triggers.Data.Trigger do
   end
 
   defp validate_repeat_in_fields(changeset) do
-    repeat_in_enabled = !!get_field(changeset, :repeat_in)
+    repeat_in_num_present = !!get_field(changeset, :repeat_in)
     repeat_in_unit_present = !!get_field(changeset, :repeat_in_unit)
-    if repeat_in_enabled != repeat_in_unit_present do
-      add_error(changeset, :repeat_in, "isn't valid")
-    else
-      changeset
+
+    cond do
+      repeat_in_num_present && !repeat_in_unit_present ->
+        add_error(changeset, :repeat_in_unit, "please select one")
+
+      !repeat_in_num_present && repeat_in_unit_present ->
+        add_error(changeset, :repeat_in, "please enter a number")
+
+      true ->
+        changeset
     end
   end
 
