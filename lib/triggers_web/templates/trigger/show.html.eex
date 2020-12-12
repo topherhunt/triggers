@@ -47,7 +47,7 @@
   <table class="table w-auto">
     <%= for instance <- @past_instances do %>
       <tr>
-        <td><%= H.print_date(instance.resolved_at) %></td>
+        <td><%= H.print_date(instance.resolved_at, "%a %b %e") %></td>
         <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
       </tr>
     <% end %>

@@ -9,6 +9,7 @@ defmodule TriggersWeb.MiscHelpers do
     if String.contains?(conn.request_path, substring), do: result
   end
 
+  # See icons.scss
   def icon(type, text \\ "") do
     Phoenix.HTML.raw "<i class='icon'>#{type}</i> #{text}"
   end
