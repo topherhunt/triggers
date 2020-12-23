@@ -32,7 +32,7 @@ config :rollbax,
 
 config :triggers, Triggers.Scheduler,
   jobs: [
-    {"*/15 * * * *", {Triggers.Nagger, :send_nags, []}}
+    {"*/10 * * * *", {Triggers.Nagger, :send_nags, []}}
   ]
 
 # ## SSL Support

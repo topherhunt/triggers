@@ -126,7 +126,7 @@ defmodule Triggers.Data.Trigger do
   def filter(query, :user_id, user_id), do: where(query, [t], t.user_id == ^user_id)
 
   def filter(query, :can_nag, true) do
-    cutoff = H.now() |> Timex.shift(minutes: -15)
+    cutoff = H.now() |> Timex.shift(minutes: -10)
     where(query, [t], is_nil(t.last_nagged_at) or t.last_nagged_at <= ^cutoff)
   end
 
