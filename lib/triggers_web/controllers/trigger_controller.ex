@@ -71,7 +71,7 @@ defmodule TriggersWeb.TriggerController do
       {:ok, trigger} ->
         conn
         |> put_flash(:info, "Trigger saved.")
-        |> redirect(to: Routes.trigger_path(conn, :show, trigger.id))
+        |> redirect(to: return_to_path(conn, trigger))
       {:error, changeset} ->
         render(conn, "edit.html", trigger: trigger, changeset: changeset)
     end
@@ -87,21 +87,22 @@ defmodule TriggersWeb.TriggerController do
     |> redirect(to: Routes.trigger_path(conn, :upcoming))
   end
 
-  def resolve(conn, %{"instance_id" => instance_id, "status" => status} = params) do
+  def resolve(conn, %{"instance_id" => instance_id, "status" => status}) do
     user = conn.assigns.current_user
     instance = TriggerInstance.filter(id: instance_id, user: user) |> Repo.one!()
     trigger = Repo.get!(Trigger, instance.trigger_id)
-    Data.update_trigger_instance!(instance, %{status: status, resolved_at: H.now()})
-    Trigger.refresh_active_instance!(trigger)
 
-    return_to = case params["return_to"] do
-      "upcoming" -> Routes.trigger_path(conn, :upcoming)
-      _ -> Routes.trigger_path(conn, :show, trigger)
+    Data.update_trigger_instance!(instance, %{status: status})
+
+    unless instance.resolved_at do
+      Data.update_trigger_instance!(instance, %{resolved_at: H.now()})
     end
+
+    Trigger.refresh_active_instance!(trigger)
 
     conn
     |> put_flash(:info, (if status == "done", do: happy(), else: sad()))
-    |> redirect(to: return_to)
+    |> redirect(to: return_to_path(conn, trigger))
   end
 
   #
@@ -110,6 +111,14 @@ defmodule TriggersWeb.TriggerController do
 
   defp load_trigger(conn, id) do
     Trigger.filter(user: conn.assigns.current_user, id: id) |> Repo.one!()
+  end
+
+  defp return_to_path(conn, trigger) do
+    case conn.params["return_to"] do
+      "upcoming" -> Routes.trigger_path(conn, :upcoming)
+      "history" -> Routes.trigger_path(conn, :history)
+      _ -> Routes.trigger_path(conn, :show, trigger)
+    end
   end
 
   defp happy, do: H.random_emojis(~w(🎉 🎊 👯‍♀️ 🥳 💃 😎 😽 🤓 🐮 🐴 🐱 🐶), 3)

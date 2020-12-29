@@ -41,8 +41,8 @@ defmodule Triggers.Data.TriggerTest do
     Repo.delete_all(TriggerInstance)
 
     trigger1 = insert_trigger(last_nagged_at: nil)
-    trigger2 = insert_trigger(last_nagged_at: H.mins_ago(14))
-    trigger3 = insert_trigger(last_nagged_at: H.mins_ago(16))
+    trigger2 = insert_trigger(last_nagged_at: H.mins_ago(9))
+    trigger3 = insert_trigger(last_nagged_at: H.mins_ago(11))
 
     ids = Trigger.filter(can_nag: true) |> Repo.all() |> Enum.map(& &1.id)
     assert trigger1.id in ids

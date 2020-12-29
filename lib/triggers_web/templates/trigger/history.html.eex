@@ -8,8 +8,19 @@
       <td><%= instance.trigger.title %></td>
       <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
       <td>
-        <%= link "details", to: Routes.trigger_path(@conn, :show, instance.trigger) %> &nbsp;
-        <%= link raw("<i class='icon'>edit</i>"), to: Routes.trigger_path(@conn, :edit, instance.trigger) %>
+        <span class="dropdown">
+          <a href="#" class="btn btn-link dropdown-toggle py-0" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+          <div class="dropdown-menu dropdown-menu--small dropdown-menu-right">
+            <%= link "details", to: Routes.trigger_path(@conn, :show, instance.trigger), class: "dropdown-item" %>
+            <%= link "edit", to: Routes.trigger_path(@conn, :edit, instance.trigger, return_to: "history"), class: "dropdown-item" %>
+            <%= if instance.status == "wont_do" do %>
+              <%= link "mark done", to: Routes.trigger_path(@conn, :resolve, instance.id, status: "done", return_to: "history"), class: "dropdown-item text-success" %>
+            <% end %>
+            <%= if instance.status == "done" do %>
+              <%= link "mark won't do", to: Routes.trigger_path(@conn, :resolve, instance.id, status: "wont_do", return_to: "history"), class: "dropdown-item text-danger" %>
+            <% end %>
+          </div>
+        </span>
       </td>
     </tr>
   <% end %>

@@ -33,7 +33,7 @@ defmodule Triggers.Emails do
   end
 
   def nag(user, triggers) do
-    emojis = H.random_emojis(~w(⏰ 📅 📆 ⏱ ✏️ 📝 ⌨️ 🧘‍♀️ 🏃‍♀️ 🚴 ✓ ☑ ✅ 💼 🤹‍♂️), 3)
+    emojis = H.random_emojis(~w(⏰ 📅 📆 ⏱ ✏️ 📝 ⌨️ 🧘‍♀️ 🏃‍♀️ 🚴 ✅ 💼 🤹‍♂️ 🤓 💪 👮 🧞‍♂️), 3)
     preview = triggers |> Enum.map(& &1.title) |> Enum.join(", ") |> String.slice(0..100)
 
     standard_email()

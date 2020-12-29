@@ -14,9 +14,9 @@ defmodule Triggers.NaggerTest do
 
       trigger1 = insert_trigger(user: user1)
       trigger2 = insert_trigger(user: user1)
-      trigger3 = insert_trigger(user: user1, last_nagged_at: H.mins_ago(20))
+      trigger3 = insert_trigger(user: user1, last_nagged_at: H.mins_ago(12))
       trigger4 = insert_trigger(user: user1)
-      trigger5 = insert_trigger(user: user1, last_nagged_at: H.mins_ago(10))
+      trigger5 = insert_trigger(user: user1, last_nagged_at: H.mins_ago(8))
       # trigger6 = insert_trigger(user: user2)
 
       insert_trigger_instance(trigger: trigger1, due_at: H.hours_ago(1))

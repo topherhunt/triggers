@@ -49,6 +49,19 @@
       <tr>
         <td><%= H.print_date(instance.resolved_at, "%a %b %e") %></td>
         <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
+        <td>
+          <span class="dropdown">
+            <a href="#" class="btn btn-link dropdown-toggle py-0" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+            <div class="dropdown-menu dropdown-menu--small dropdown-menu-right">
+              <%= if instance.status == "wont_do" do %>
+                <%= link "mark done", to: Routes.trigger_path(@conn, :resolve, instance.id, status: "done"), class: "dropdown-item text-success" %>
+              <% end %>
+              <%= if instance.status == "done" do %>
+                <%= link "mark won't do", to: Routes.trigger_path(@conn, :resolve, instance.id, status: "wont_do"), class: "dropdown-item text-danger" %>
+              <% end %>
+            </div>
+          </span>
+        </td>
       </tr>
     <% end %>
   </table>

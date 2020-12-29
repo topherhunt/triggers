@@ -24,10 +24,6 @@
             <%= H.print_date(next_instance.due_at, "%a %b %e") %>
           <% end %>
         </div>
-
-        <!-- <%= if trigger.repeat_in_unit do %>
-          <div class="small u-tooltip-target">🔁<div class="u-tooltip">every <%= trigger.repeat_in %> <%= trigger.repeat_in_unit %>s</div></div>
-        <% end %> -->
       </td>
 
       <td>
@@ -42,15 +38,20 @@
       <td>
         <%= if due_by_today?(next_instance) do %>
           <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "btn btn-success btn-sm" %> &nbsp;
-          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "wont_do", return_to: "upcoming"), class: "btn btn-danger btn-sm" %> &nbsp;
+          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "wont_do", return_to: "upcoming"), class: "btn btn-danger btn-sm" %>
         <% else %>
           <span class="text-muted">not due yet</span> &nbsp;
           <%= link "mark done", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "small" %>
         <% end %>
       </td>
       <td>
-        <%= link "details", to: Routes.trigger_path(@conn, :show, trigger) %> &nbsp;
-        <%= link raw("<i class='icon'>edit</i>"), to: Routes.trigger_path(@conn, :edit, trigger) %>
+        <span class="dropdown">
+          <a href="#" class="btn btn-link dropdown-toggle py-0" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+          <div class="dropdown-menu dropdown-menu--small dropdown-menu-right">
+            <%= link "details", to: Routes.trigger_path(@conn, :show, trigger), class: "dropdown-item" %>
+            <%= link "edit", to: Routes.trigger_path(@conn, :edit, trigger, return_to: "upcoming"), class: "dropdown-item" %>
+          </div>
+        </span>
       </td>
     </tr>
   <% end %>
