@@ -1,6 +1,6 @@
 use Mix.Config
 
-config :logger, level: :debug
+config :logger, level: :info # use :debug to view sql queries etc.
 
 config :triggers, Triggers.Repo,
   url: H.env!("DATABASE_URL"),
