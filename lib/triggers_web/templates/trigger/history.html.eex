@@ -3,8 +3,8 @@
 <table class="table w-auto mx-auto">
   <%= for instance <- @instances do %>
     <tr>
-      <td><%= H.print_date(instance.resolved_at) %></td>
-      <td><%= H.print_time(instance.resolved_at) %></td>
+      <td><%= H.print_date(instance.resolved_at, @current_user) %></td>
+      <td><%= H.print_time(instance.resolved_at, @current_user) %></td>
       <td><%= instance.trigger.title %></td>
       <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
       <td>

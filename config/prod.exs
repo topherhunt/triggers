@@ -4,6 +4,7 @@ config :logger, level: :info
 
 config :triggers, Triggers.Repo,
   url: H.env!("DATABASE_URL"),
+  ssl: true, # Heroku Postgres now requires the ssl option.
   pool_size: 10 # Heroku PG hobby-dev allows max 20 db connections
 
 # Note we also include the path to a cache manifest

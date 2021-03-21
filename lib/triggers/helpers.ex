@@ -111,12 +111,20 @@ defmodule Triggers.Helpers do
   #
 
   # See https://hexdocs.pm/timex/Timex.Format.DateTime.Formatters.Strftime.html
-  def print_datetime(datetime, format \\ "%Y-%m-%d %l:%M %P") do
-    if datetime, do: Timex.format!(datetime, format, :strftime)
+  def print_datetime(datetime, user, opts \\ []) do
+    if datetime do
+      format = opts[:format] || "%Y-%m-%d %l:%M %P"
+      timezone = user |> try(:timezone) || "UTC"
+      datetime |> Timex.to_datetime(timezone) |> Timex.format!(format, :strftime)
+    end
   end
 
-  def print_date(datetime, format \\ "%Y-%m-%d"), do: print_datetime(datetime, format)
+  def print_date(datetime, user, opts \\ []) do
+    print_datetime(datetime, user, format: opts[:format] || "%Y-%m-%d")
+  end
 
-  def print_time(datetime, format \\ "%l:%M %P"), do: print_datetime(datetime, format)
+  def print_time(datetime, user, opts \\ []) do
+    print_datetime(datetime, user, format: opts[:format] || "%l:%M %P")
+  end
 
 end

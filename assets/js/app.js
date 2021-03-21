@@ -11,6 +11,7 @@ import css from "../css/app.css"
 //
 import "bootstrap"
 import "phoenix_html"
+import "select2"
 import $ from "jquery"
 window.$ = $
 

@@ -39,7 +39,7 @@ defmodule Triggers.Emails do
     standard_email()
     |> to(user.email)
     |> subject("#{emojis} #{length(triggers)} due triggers: #{preview}")
-    |> render("nag.html", triggers: triggers)
+    |> render("nag.html", triggers: triggers, user: user)
   end
 
   #

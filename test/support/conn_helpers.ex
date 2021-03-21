@@ -34,27 +34,25 @@ defmodule TriggersWeb.ConnHelpers do
     refute conn.resp_body =~ "Log out"
   end
 
-  def assert_text(conn, text), do: assert page_text(conn) =~ text
-
-  def page_text(conn) do
-    {:ok, doc} = Floki.parse_document(conn.resp_body)
-
-    doc
-    |> remove_tags("noscript")
-    |> Floki.text(js: false, style: false, sep: "|||")
-    |> String.replace(~r/(\n|\s\s+)/, " ")
-    |> String.replace("|||", "   ")
-    |> String.trim()
+  # Content can be plain text, HTML, or a regex.
+  def assert_content(conn, content) do
+    unless cleaned_body(conn) =~ content do
+      filepath = write_response_body_to_file(conn.resp_body)
+      raise "Expected the response html to include #{inspect(content)}, but it didn't. \nView the full response at: #{filepath}"
+    end
   end
 
-  defp remove_tags(floki_doc, type) do
-    Floki.traverse_and_update(floki_doc, fn node ->
-      if elem(node, 0) == type do
-        nil
-      else
-        node
-      end
-    end)
+  def refute_content(conn, content) do
+    if cleaned_body(conn) =~ content do
+      filepath = write_response_body_to_file(conn.resp_body)
+      raise "Expected the response html to NOT include #{inspect(content)}, but it did. \nView the full response at: #{filepath}"
+    end
+  end
+
+  defp cleaned_body(conn) do
+    conn.resp_body
+    |> String.replace(~r/\s\s+/, " ")
+    |> String.replace("&#39;", "'")
   end
 
   def assert_selector(conn, selector, opts \\ []) do
@@ -71,17 +69,27 @@ defmodule TriggersWeb.ConnHelpers do
 
     if opts[:count] do
       unless length(matches) == opts[:count] do
-        raise "Expected to find selector '#{selector}' #{opts[:count]} times, but found it #{length(matches)} times. \nThe full html:\n#{conn.resp_body}"
+        filepath = write_response_body_to_file(conn.resp_body)
+        raise "Expected to find selector '#{selector}' #{opts[:count]} times, but found it #{length(matches)} times. \nView the full html at: #{filepath}"
       end
     else
       unless length(matches) >= 1 do
-        raise "Expected to find selector '#{selector}' one or more times, but found it 0 times. \n\nThe full html:\n\n#{conn.resp_body}"
+        filepath = write_response_body_to_file(conn.resp_body)
+        raise "Expected to find selector '#{selector}' one or more times, but found it 0 times. \nView the full html at: #{filepath}"
       end
     end
   end
 
   def refute_selector(conn, selector) do
     assert_selector(conn, selector, count: 0)
+  end
+
+  def write_response_body_to_file(source_html) do
+    System.cmd("mkdir", ["-p", "./tmp/test_failures"])
+    filename = "#{Date.utc_today}_#{Nanoid.generate(6)}.html"
+    filepath = "./tmp/test_failures/#{filename}"
+    File.write!(filepath, source_html)
+    filepath
   end
 
   def flash_messages(conn) do

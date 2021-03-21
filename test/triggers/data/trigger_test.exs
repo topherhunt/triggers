@@ -50,7 +50,39 @@ defmodule Triggers.Data.TriggerTest do
     assert trigger3.id in ids
   end
 
-  def assert_same(list1, list2) do
-    assert H.sort(Enum.map(list1, & &1.id)) == H.sort(Enum.map(list2, & &1.id))
+  describe "#refresh_active_instance!" do
+    test "works when adding the first instance" do
+      user = insert_user(timezone: "America/Los_Angeles")
+      trigger = insert_trigger(
+        user: user,
+        first_due_date: ~D[2021-02-01],
+        due_time: ~T[15:00:00]) # 3 PM local time
+
+      Trigger.refresh_active_instance!(trigger)
+
+      # One instance was created, due on first_due_date at 3 PM LA timezone = 23:00 UTC.
+      [instance] = Repo.all(TriggerInstance.filter(trigger: trigger))
+      assert instance.due_at == ~U[2021-02-01 23:00:00Z]
+    end
+
+    test "works when adding a repeat instance" do
+      user = insert_user(timezone: "America/Los_Angeles")
+      trigger = insert_trigger(
+        user: user,
+        first_due_date: ~D[2021-02-01],
+        due_time: ~T[15:00:00], # 3 PM local time
+        repeat_in: 7, repeat_in_unit: "day")
+      insert_trigger_instance(trigger: trigger,
+        due_at: ~U[2021-02-12 01:00:00Z],
+        resolved_at: H.now(),
+        status: "wont_do")
+
+      Trigger.refresh_active_instance!(trigger)
+
+      # The next instance's due date is based on the 7-day cycle starting from the first
+      # due date, NOT starting from the previous instance's due/resolved dates.
+      [instance] = Repo.all(TriggerInstance.filter(trigger: trigger, resolved: false))
+      assert instance.due_at == ~U[2021-02-15 23:00:00Z]
+    end
   end
 end

@@ -30,8 +30,8 @@
   </div>
 
   <div class="form-group">
-    <%= label f, :due_time, "Due time (UTC)" %> <%= required() %>
-    <div class="small text-muted mt-n2">The nagging will start after this time.</div>
+    <%= label f, :due_time, "Due time" %> <%= required() %>
+    <div class="small text-muted mt-n2">The nagging will start after this time. Use your local timezone, <%= @current_user.timezone %>.</div>
     <%= time_input f, :due_time, class: "form-control" %>
     <%= error_tag f, :due_time %>
   </div>

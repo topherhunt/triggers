@@ -1,6 +1,10 @@
 /* This file is for your main application css. */
 
+/* Vendor */
 @import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
+@import "../node_modules/select2/dist/css/select2.css";
+
+/* Custom */
 @import "icons.scss";
 @import "layout.scss";
 @import "triggers.scss";

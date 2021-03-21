@@ -5,7 +5,7 @@ defmodule Triggers.Data.TriggerInstance do
 
   schema "trigger_instances" do
     belongs_to :trigger, Triggers.Data.Trigger
-    field :due_at, :utc_datetime
+    field :due_at, :utc_datetime # in UTC timezone (regardless of user's timezone)
     field :resolved_at, :utc_datetime
     field :status, :string
     timestamps()

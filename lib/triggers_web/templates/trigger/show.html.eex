@@ -19,9 +19,9 @@
         <%= if @next_instance do %>
           <span class='<%= if due_now?(@next_instance), do: "text-danger" %>'>
             <%= if due_on_today?(@next_instance) do %>
-              Today <%= H.print_time(@next_instance.due_at) %>
+              Today <%= H.print_time(@next_instance.due_at, @current_user) %>
             <% else %>
-              <%= H.print_datetime(@next_instance.due_at, "%a %b %e, %l:%M %P") %>
+              <%= H.print_datetime(@next_instance.due_at, @current_user, format: "%a %b %e, %l:%M %P") %>
             <% end %>
           </span>
           <%= if @trigger.repeat_in do %>
@@ -47,7 +47,7 @@
   <table class="table w-auto">
     <%= for instance <- @past_instances do %>
       <tr>
-        <td><%= H.print_date(instance.resolved_at, "%a %b %e") %></td>
+        <td><%= H.print_date(instance.resolved_at, @current_user, format: "%a %b %e") %></td>
         <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
         <td>
           <span class="dropdown">

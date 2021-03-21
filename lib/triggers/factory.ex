@@ -4,14 +4,15 @@ defmodule Triggers.Factory do
   alias Triggers.Helpers, as: H
 
   def insert_user(params \\ %{}) do
-    params = cast(params, [:name, :email, :confirmed_at])
+    params = cast(params, [:name, :email, :confirmed_at, :timezone])
     uuid = random_uuid()
 
     Data.insert_user!(%{
       name: Map.get(params, :name, "User #{}"),
       email: String.downcase(Map.get(params, :email, "user_#{uuid}@example.com")),
       password: "password",
-      confirmed_at: Map.get(params, :confirmed_at, DateTime.utc_now())
+      confirmed_at: Map.get(params, :confirmed_at, DateTime.utc_now()),
+      timezone: params[:timezone] || "US/Eastern"
     }, :admin)
   end
 
@@ -26,7 +27,7 @@ defmodule Triggers.Factory do
     params = cast(params, [:user, :user_id, :title, :first_due_date, :due_time, :repeat_in, :repeat_in_unit, :last_nagged_at])
 
     attrs = %{
-      user_id: params[:user_id] || (params[:user] || insert_user()).id,
+      user_id: params[:user_id] || H.try(params[:user], :id) || insert_user().id,
       title: params[:title] || "Trigger #{random_uuid()}",
       why: "the reason",
       first_due_date: params[:first_due_date] || H.today(),
@@ -43,7 +44,7 @@ defmodule Triggers.Factory do
     params = cast(params, [:trigger, :trigger_id, :due_at, :resolved_at, :status])
 
     attrs = %{
-      trigger_id: params[:trigger_id] || (params[:trigger] || insert_trigger()).id,
+      trigger_id: params[:trigger_id] || H.try(params[:trigger], :id) || insert_trigger().id,
       due_at: params[:due_at] || DateTime.utc_now(),
       resolved_at: params[:resolved_at] || nil,
       status: params[:status] || nil

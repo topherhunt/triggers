@@ -1,5 +1,6 @@
 defmodule Triggers.Data do
   import Ecto.Query
+  import Ecto.Changeset
   alias Triggers.Repo
   alias Triggers.Data.{User, Nonce, LoginTry, Trigger, TriggerInstance}
   alias Triggers.Helpers, as: H
@@ -15,7 +16,16 @@ defmodule Triggers.Data do
 
   def update_user!(a, b, c), do: update_user(a, b, c) |> Repo.unwrap!()
   def update_user(%User{} = struct, params, scope) do
-    struct |> User.changeset(params, scope) |> Repo.update()
+    changeset = User.changeset(struct, params, scope)
+
+    # If the user timezone has changed, we need to refresh all their active instance's
+    # due_at so the times reflect this timezone.
+    if get_change(changeset, :timezone) do
+      Repo.all(Trigger.filter(user: struct))
+      |> Enum.each(& Trigger.refresh_active_instance!(&1))
+    end
+
+    Repo.update(changeset)
   end
 
   def delete_user!(user), do: Repo.delete!(user)

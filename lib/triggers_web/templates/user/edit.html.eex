@@ -11,6 +11,7 @@
       <%= text_input f, :name, class: "form-control", required: true %>
       <%= error_tag f, :name %>
     </div>
+
     <div class="form-group">
       <%= label f, :password do %>
         <%= gettext("New password") %>
@@ -30,6 +31,7 @@
       <%= password_input f, :password_confirmation, class: "form-control" %>
       <%= error_tag f, :password_confirmation %>
     </div>
+
     <div class="form-group <%= hidden_class %> js-current-password">
       <%= label f, :password_confirmation do %>
         <%= gettext("Current password") %>
@@ -38,6 +40,12 @@
       <%= password_input f, :current_password, class: "form-control" %>
       <%= error_tag f, :current_password %>
     </div>
+
+    <div class="form-group">
+      <%= label f, :timezone, gettext("Time zone") %><br>
+      <%= select f, :timezone, timezone_options(), class: "js-select2 form-control" %>
+    </div>
+
     <div class="form-group">
       <%= submit gettext("Save"), class: "btn btn-primary" %>
     </div>

@@ -7,7 +7,7 @@
       <li style="margin-bottom: 1rem;">
         <%= trigger.title %><br>
         <small>
-          <%= H.print_time(next_instance.due_at) %> &nbsp;
+          <%= H.print_time(next_instance.due_at, @user) %> &nbsp;
           <%= link "details", to: Routes.trigger_url(TriggersWeb.Endpoint, :show, trigger) %>
         </small>
       </li>

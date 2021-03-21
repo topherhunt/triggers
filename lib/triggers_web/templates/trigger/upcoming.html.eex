@@ -19,9 +19,9 @@
       <td>
         <div class='<%= if due_now?(next_instance), do: "text-danger" %>'>
           <%= if due_on_today?(next_instance) do %>
-            Today <%= H.print_time(next_instance.due_at) %>
+            Today <%= H.print_time(next_instance.due_at, @current_user) %>
           <% else %>
-            <%= H.print_date(next_instance.due_at, "%a %b %e") %>
+            <%= H.print_date(next_instance.due_at, @current_user, format: "%a %b %e") %>
           <% end %>
         </div>
       </td>

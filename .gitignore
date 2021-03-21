@@ -39,3 +39,4 @@ config/secrets.exs
 # Temp files
 .DS_Store
 *.log
+tmp/

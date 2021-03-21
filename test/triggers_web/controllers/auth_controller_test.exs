@@ -33,7 +33,7 @@ defmodule TriggersWeb.AuthControllerTest do
       params = %{"user" => %{"name" => "", "email" => "topher@example.com", "password" => "password1", "password_confirmation" => "password1"}}
       conn = post(conn, Routes.auth_path(conn, :signup_submit), params)
 
-      assert_text conn, "can't be blank"
+      assert_content conn, "can't be blank"
       assert User.filter(email: "topher@example.com") |> Repo.count() == 0
       assert count_emails_sent() == 0
     end
@@ -42,7 +42,7 @@ defmodule TriggersWeb.AuthControllerTest do
       params = %{"user" => %{"name" => "Topher", "email" => "topher@example.com", "password" => "password1", "password_confirmation" => "password2"}}
       conn = post(conn, Routes.auth_path(conn, :signup_submit), params)
 
-      assert_text conn, "doesn't match password"
+      assert_content conn, "doesn't match password"
       assert User.filter(email: "topher@example.com") |> Repo.count() == 0
       assert count_emails_sent() == 0
     end
@@ -266,7 +266,7 @@ defmodule TriggersWeb.AuthControllerTest do
         "user" => %{"password" => "password2", "password_confirmation" => "password3"}
       })
 
-      assert_text conn, "doesn't match password"
+      assert_content conn, "doesn't match password"
       assert !(Repo.get!(User, user.id) |> Data.password_correct?("password2"))
     end
   end

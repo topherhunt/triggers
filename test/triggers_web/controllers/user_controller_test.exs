@@ -51,7 +51,7 @@ defmodule TriggersWeb.UserControllerTest do
       params = %{"user" => %{"name" => ""}}
       conn = patch(conn, Routes.user_path(conn, :update), params)
 
-      assert_text conn, "can't be blank"
+      assert_content conn, "can't be blank"
       assert Repo.get!(User, user.id).name == user.name # Name hasn't changed
     end
 
@@ -62,7 +62,7 @@ defmodule TriggersWeb.UserControllerTest do
       params = %{"user" => %{"name" => "New name", "password" => "password2", "password_confirmation" => "password2", "current_password" => "wrong"}}
       conn = patch(conn, Routes.user_path(conn, :update), params)
 
-      assert_text conn, "is incorrect"
+      assert_content conn, "is incorrect"
       assert Repo.get!(User, user.id) |> Data.password_correct?("password") # PW hasn't changed
     end
   end

@@ -14,14 +14,16 @@ defmodule Triggers.Data.User do
     field :password_hash, :string
     field :confirmed_at, :utc_datetime
     field :last_visit_date, :date
+    field :timezone, :string, default: "US/Eastern"
     timestamps()
   end
 
   def changeset(struct, params, :admin) do
     struct
-    |> cast(params, [:name, :email, :password, :confirmed_at, :last_visit_date])
+    |> cast(params, [:name, :email, :password, :confirmed_at, :last_visit_date, :timezone])
     |> validate_required([:name, :email])
     |> validate_length(:password, min: 8, max: 50)
+    |> validate_inclusion(:timezone, Timex.timezones())
     |> unique_constraint(:email)
     |> downcase_field(:email)
     |> require_password()
@@ -30,7 +32,7 @@ defmodule Triggers.Data.User do
 
   def changeset(struct, params, :owner) do
     struct
-    |> cast(params, [:name, :email, :password, :password_confirmation, :current_password])
+    |> cast(params, [:name, :email, :password, :password_confirmation, :current_password, :timezone])
     |> disallow_field_change(:email)
     |> validate_password_confirmation()
     |> validate_current_password()
