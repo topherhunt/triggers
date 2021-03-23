@@ -21,7 +21,19 @@ defmodule TriggersWeb.TriggerView do
     H.date_lte?(H.to_date(instance.due_at), H.today())
   end
 
+  def due_before_today?(instance) do
+    H.date_lt?(H.to_date(instance.due_at), H.today())
+  end
+
   def too_many_new_triggers?(triggers) do
     Enum.count(triggers, & H.date_gte?(H.to_date(&1.inserted_at), H.today())) >= 1
+  end
+
+  def time_class(instance) do
+    cond do
+      !due_on_today?(instance) -> "text-muted small"
+      due_on_today?(instance) && due_now?(instance) -> "text-danger"
+      true -> ""
+    end
   end
 end

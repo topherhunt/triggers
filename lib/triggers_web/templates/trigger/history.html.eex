@@ -1,23 +1,37 @@
 <h3 class="text-center">History</h3>
 
-<table class="table w-auto mx-auto">
+<table class="table table-sm w-auto mx-auto">
+  <tr>
+    <th>Task</th>
+    <th>Resolved at</th>
+    <th></th>
+    <th></th>
+  </tr>
   <%= for instance <- @instances do %>
     <tr>
-      <td><%= H.print_date(instance.resolved_at, @current_user) %></td>
-      <td><%= H.print_time(instance.resolved_at, @current_user) %></td>
-      <td><%= instance.trigger.title %></td>
-      <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
       <td>
+        <%= instance.trigger.title %>
+        <div class="small text-muted">due <%= H.print_datetime(instance.due_at, @current_user, format: "%a %b %e, %l:%M %P") %></div>
+      </td>
+      <td class="align-middle small nowrap"><%= H.print_datetime(instance.resolved_at, @current_user, format: "%a %b %e, %l:%M %P") %></td>
+      <td class="align-middle nowrap">
+        <%= if instance.status == "done" do %>
+          <span class="text-success">Done</span>
+        <% else %>
+          <span class="text-danger">Won't do</span>
+        <% end %>
+      </td>
+      <td class="align-middle">
         <span class="dropdown">
-          <a href="#" class="btn btn-link dropdown-toggle py-0" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+          <a href="#" class="btn btn-link dropdown-toggle py-0 border" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
           <div class="dropdown-menu dropdown-menu--small dropdown-menu-right">
-            <%= link "details", to: Routes.trigger_path(@conn, :show, instance.trigger), class: "dropdown-item" %>
-            <%= link "edit", to: Routes.trigger_path(@conn, :edit, instance.trigger, return_to: "history"), class: "dropdown-item" %>
+            <%= link icon("zoom_in", "Details"), to: Routes.trigger_path(@conn, :show, instance.trigger), class: "dropdown-item" %>
+            <%= link icon("edit", "Edit"), to: Routes.trigger_path(@conn, :edit, instance.trigger, return_to: "history"), class: "dropdown-item" %>
             <%= if instance.status == "wont_do" do %>
-              <%= link "mark done", to: Routes.trigger_path(@conn, :resolve, instance.id, status: "done", return_to: "history"), class: "dropdown-item text-success" %>
+              <%= link icon("done", "Mark done"), to: Routes.trigger_path(@conn, :resolve, instance.id, status: "done", return_to: "history"), class: "dropdown-item text-success" %>
             <% end %>
             <%= if instance.status == "done" do %>
-              <%= link "mark won't do", to: Routes.trigger_path(@conn, :resolve, instance.id, status: "wont_do", return_to: "history"), class: "dropdown-item text-danger" %>
+              <%= link icon("clear", "Mark won't do"), to: Routes.trigger_path(@conn, :resolve, instance.id, status: "wont_do", return_to: "history"), class: "dropdown-item text-danger" %>
             <% end %>
           </div>
         </span>

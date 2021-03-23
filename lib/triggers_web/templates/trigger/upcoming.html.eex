@@ -10,48 +10,56 @@
 
 <h3 class="text-center">Active triggers</h3>
 
-<table class="table w-auto mx-auto">
+<table class="table table-sm w-auto mx-auto">
   <%= for trigger <- @triggers do %>
-    <% past_instances = get_latest_resolved_instances(trigger, 14) %>
+    <% past_instances = get_latest_resolved_instances(trigger, 50) %>
     <% next_instance = Trigger.next_instance(trigger) %>
     <tr>
 
-      <td>
-        <div class='<%= if due_now?(next_instance), do: "text-danger" %>'>
-          <%= if due_on_today?(next_instance) do %>
-            Today <%= H.print_time(next_instance.due_at, @current_user) %>
-          <% else %>
-            <%= H.print_date(next_instance.due_at, @current_user, format: "%a %b %e") %>
-          <% end %>
-        </div>
-      </td>
-
-      <td>
-        <%= trigger.title %>
-        <div class="mt-n1">
-          <%= for i <- past_instances do %>
-            <div class="resolved-bubble --<%= i.status %>"></div>
-          <% end %>
-        </div>
-      </td>
-
-      <td>
-        <%= if due_by_today?(next_instance) do %>
-          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "btn btn-success btn-sm" %> &nbsp;
-          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "wont_do", return_to: "upcoming"), class: "btn btn-danger btn-sm" %>
+      <td class='align-middle nowrap <%= if due_before_today?(next_instance), do: "text-danger" %>'>
+        <%= if due_on_today?(next_instance) do %>
+          Today
         <% else %>
-          <span class="text-muted">not due yet</span> &nbsp;
-          <%= link "mark done", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "small" %>
+          <%= H.print_date(next_instance.due_at, @current_user, format: "%a %b %e") %>
         <% end %>
       </td>
-      <td>
+
+      <td class='align-middle nowrap <%= time_class(next_instance) %>'>
+        <%= H.print_time(next_instance.due_at, @current_user) %>
+      </td>
+
+      <td class="">
+        <div class="mt-n1">
+          <%= past_instances |> Enum.with_index() |> Enum.map(fn {instance, index} -> %>
+            <% width = max(30 - (index*2), 1) %>
+            <div class='resolved-bar --<%= instance.status %>' style="width: <%= width %>px;"></div>
+          <% end) %>
+        </div>
+        <div class="clearfix"></div>
+        <div class="pt-1"><%= trigger.title %></div>
+      </td>
+
+      <td class="align-middle nowrap">
+        <%= if due_by_today?(next_instance) do %>
+          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "btn btn-light btn-sm text-success border" %>
+          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "wont_do", return_to: "upcoming"), class: "btn btn-light btn-sm text-danger border" %>
+        <% else %>
+          <div class="text-muted em text-center">not due yet</div>
+        <% end %>
+      </td>
+
+      <td class="align-middle">
         <span class="dropdown">
-          <a href="#" class="btn btn-link dropdown-toggle py-0" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+          <a href="#" class="btn btn-link dropdown-toggle py-0 border" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
           <div class="dropdown-menu dropdown-menu--small dropdown-menu-right">
-            <%= link "details", to: Routes.trigger_path(@conn, :show, trigger), class: "dropdown-item" %>
-            <%= link "edit", to: Routes.trigger_path(@conn, :edit, trigger, return_to: "upcoming"), class: "dropdown-item" %>
+            <%= link icon("zoom_in", "Details"), to: Routes.trigger_path(@conn, :show, trigger), class: "dropdown-item" %>
+            <%= link icon("edit", "Edit"), to: Routes.trigger_path(@conn, :edit, trigger, return_to: "upcoming"), class: "dropdown-item" %>
+            <%= unless due_by_today?(next_instance) do %>
+              <%= link icon("done", "Mark done"), to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "dropdown-item text-success" %>
+            <% end %>
           </div>
         </span>
+
       </td>
     </tr>
   <% end %>

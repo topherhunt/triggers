@@ -4,8 +4,9 @@
 //
 
 .em { font-style: italic; }
+.strong { font-weight: bold; }
 
-.u-nowrap { white-space: nowrap; }
+.nowrap { white-space: nowrap; }
 
 .u-ellipsis { overflow: hidden; text-overflow: ellipsis; }
 
@@ -22,6 +23,24 @@
 .u-relative { position: relative; }
 .u-abs-tr { position: absolute; top: 0; right: 0; }
 .u-abs-tl { position: absolute; top: 0; left: 0; }
+
+//
+// Flexbox layout utils! (WIP)
+//
+
+.flex { display: flex; }
+
+.flex-v-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-30px { flex: 0 0 30px; } // fixed-width col, 30px
+.flex-75px { flex: 0 0 75px; } // fixed-width col, 75px
+.flex-12rem { flex: 0 0 12rem; } // fixed-width col, 12rem
+.flex-0 { flex: 0 } // fluid-width col (takes up minimum space needed)
+.flex-1 { flex: 1 } // fluid-width col (takes up all available space)
 
 //
 // Width

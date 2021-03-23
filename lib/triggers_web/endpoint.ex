@@ -42,7 +42,7 @@ defmodule TriggersWeb.Endpoint do
   plug Plug.RequestId # TODO: Remove?
   # plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
-  # Custom one-line request logging
+  # Custom one-line request logging.
   # Must come before the session & router plugs. (the actual logging takes place later)
   plug TriggersWeb.RequestLogger
 

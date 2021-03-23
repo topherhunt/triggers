@@ -44,20 +44,35 @@
 
   <h4>History</h4>
 
-  <table class="table w-auto">
+  <table class="table table-sm w-auto">
+    <tr>
+      <th colspan="2">Due at</th>
+      <th colspan="2">Resolved at</th>
+      <th></th>
+      <th></th>
+    </tr>
     <%= for instance <- @past_instances do %>
       <tr>
+        <td><%= H.print_date(instance.due_at, @current_user, format: "%a %b %e") %></td>
+        <td><%= H.print_time(instance.due_at, @current_user) %> &nbsp;</td>
         <td><%= H.print_date(instance.resolved_at, @current_user, format: "%a %b %e") %></td>
-        <td><div class="resolved-bubble --<%= instance.status %>"></div></td>
+        <td><%= H.print_time(instance.resolved_at, @current_user) %></td>
+        <td>
+          <%= if instance.status == "done" do %>
+            <span class="text-success">Done</span>
+          <% else %>
+            <span class="text-danger">Won't do</span>
+          <% end %>
+        </td>
         <td>
           <span class="dropdown">
-            <a href="#" class="btn btn-link dropdown-toggle py-0" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+            <a href="#" class="btn btn-link dropdown-toggle py-0 border" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
             <div class="dropdown-menu dropdown-menu--small dropdown-menu-right">
               <%= if instance.status == "wont_do" do %>
-                <%= link "mark done", to: Routes.trigger_path(@conn, :resolve, instance.id, status: "done"), class: "dropdown-item text-success" %>
+                <%= link icon("done", "Mark done"), to: Routes.trigger_path(@conn, :resolve, instance.id, status: "done"), class: "dropdown-item text-success" %>
               <% end %>
               <%= if instance.status == "done" do %>
-                <%= link "mark won't do", to: Routes.trigger_path(@conn, :resolve, instance.id, status: "wont_do"), class: "dropdown-item text-danger" %>
+                <%= link icon("clear", "Mark won't do"), to: Routes.trigger_path(@conn, :resolve, instance.id, status: "wont_do"), class: "dropdown-item text-danger" %>
               <% end %>
             </div>
           </span>
