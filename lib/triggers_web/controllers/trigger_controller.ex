@@ -12,13 +12,8 @@ defmodule TriggersWeb.TriggerController do
   # The "main" view. Lists all triggers that are due now or due in the future,
   # ordered by due date/time ascending.
   def upcoming(conn, _params) do
-    triggers =
-      Trigger.filter(user: conn.assigns.current_user, active: true)
-      |> preload(:trigger_instances)
-      |> Repo.all()
-      |> Enum.sort_by(& Trigger.next_instance_timestamp(&1))
-
-    render(conn, "upcoming.html", triggers: triggers)
+    live_render(conn, TriggersWeb.UpcomingTriggersLive,
+      session: %{"current_user_id" => conn.assigns.current_user.id})
   end
 
   # Lists all instances of triggers I've completed in the past, in descending order.
@@ -91,13 +86,7 @@ defmodule TriggersWeb.TriggerController do
     user = conn.assigns.current_user
     instance = TriggerInstance.filter(id: instance_id, user: user) |> Repo.one!()
     trigger = Repo.get!(Trigger, instance.trigger_id)
-
     Data.update_trigger_instance!(instance, %{status: status})
-
-    unless instance.resolved_at do
-      Data.update_trigger_instance!(instance, %{resolved_at: H.now()})
-    end
-
     Trigger.refresh_active_instance!(trigger)
 
     conn

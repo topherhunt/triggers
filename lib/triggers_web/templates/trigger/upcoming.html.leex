@@ -1,9 +1,9 @@
 <div class="u-relative">
   <div class="u-abs-tr mt-n2">
     <%= if too_many_new_triggers?(@triggers) do %>
-      <%= link "+ New trigger", to: Routes.trigger_path(@conn, :new), "data-confirm": "Whoa there! 🐎🤠 You've already added some triggers today. This tool works best when you build up your routine gradually. Are you sure you want to add another?" %>
+      <%= link "+ New trigger", to: Routes.trigger_path(TriggersWeb.Endpoint, :new), "data-confirm": "Whoa there! 🐎🤠 You've already added some triggers today. This tool works best when you build up your routine gradually. Are you sure you want to add another?" %>
     <% else %>
-      <%= link "+ New trigger", to: Routes.trigger_path(@conn, :new) %>
+      <%= link "+ New trigger", to: Routes.trigger_path(TriggersWeb.Endpoint, :new) %>
     <% end %>
   </div>
 </div>
@@ -41,8 +41,8 @@
 
       <td class="align-middle nowrap">
         <%= if due_by_today?(next_instance) do %>
-          <%= link "🎉 Done!", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "btn btn-light btn-sm text-success border" %>
-          <%= link "😕 Won't do", to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "wont_do", return_to: "upcoming"), class: "btn btn-light btn-sm text-danger border" %>
+          <%= link "🎉 Done!", to: "#", phx_click: "resolve", phx_value_status: "done", phx_value_instance_id: next_instance.id, class: "btn btn-light btn-sm text-success border" %>
+          <%= link "😕 Won't do", to: "#", phx_click: "resolve", phx_value_status: "wont_do", phx_value_instance_id: next_instance.id, class: "btn btn-light btn-sm text-danger border" %>
         <% else %>
           <div class="text-muted em text-center">not due yet</div>
         <% end %>
@@ -52,10 +52,10 @@
         <span class="dropdown">
           <a href="#" class="btn btn-link dropdown-toggle py-0 border" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
           <div class="dropdown-menu dropdown-menu--small dropdown-menu-right">
-            <%= link icon("zoom_in", "Details"), to: Routes.trigger_path(@conn, :show, trigger), class: "dropdown-item" %>
-            <%= link icon("edit", "Edit"), to: Routes.trigger_path(@conn, :edit, trigger, return_to: "upcoming"), class: "dropdown-item" %>
+            <%= link icon("zoom_in", "Details"), to: Routes.trigger_path(TriggersWeb.Endpoint, :show, trigger), class: "dropdown-item" %>
+            <%= link icon("edit", "Edit"), to: Routes.trigger_path(TriggersWeb.Endpoint, :edit, trigger, return_to: "upcoming"), class: "dropdown-item" %>
             <%= unless due_by_today?(next_instance) do %>
-              <%= link icon("done", "Mark done"), to: Routes.trigger_path(@conn, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "dropdown-item text-success" %>
+              <%= link icon("done", "Mark done"), to: Routes.trigger_path(TriggersWeb.Endpoint, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "dropdown-item text-success" %>
             <% end %>
           </div>
         </span>

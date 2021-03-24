@@ -1,5 +1,6 @@
 defmodule Triggers.Data.TriggerInstance do
   use Ecto.Schema
+  alias Triggers.Helpers, as: H
   import Ecto.Changeset
   import Ecto.Query
 
@@ -16,6 +17,7 @@ defmodule Triggers.Data.TriggerInstance do
     |> cast(params, [:trigger_id, :due_at, :resolved_at, :status])
     |> validate_required([:trigger_id, :due_at])
     |> validate_inclusion(:status, ["done", "wont_do", nil])
+    |> set_resolved_at_if_resolved()
   end
 
   # def changeset(struct, params, :owner) do
@@ -23,6 +25,14 @@ defmodule Triggers.Data.TriggerInstance do
   #   |> cast(params, [])
   #   |> changeset(%{}, :admin) # now do the standard validations & data prep steps
   # end
+
+  defp set_resolved_at_if_resolved(chg) do
+    if get_field(chg, :status) != nil && get_field(chg, :resolved_at) == nil do
+      chg |> put_change(:resolved_at, H.now() |> DateTime.truncate(:second))
+    else
+      chg
+    end
+  end
 
   #
   # Filters
