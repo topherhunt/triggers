@@ -41,8 +41,8 @@
 
       <td class="align-middle nowrap">
         <%= if due_by_today?(next_instance) do %>
-          <%= link "🎉 Done!", to: "#", phx_click: "resolve", phx_value_status: "done", phx_value_instance_id: next_instance.id, class: "btn btn-light btn-sm text-success border" %>
-          <%= link "😕 Won't do", to: "#", phx_click: "resolve", phx_value_status: "wont_do", phx_value_instance_id: next_instance.id, class: "btn btn-light btn-sm text-danger border" %>
+          <%= link "🎉 Done!", to: "#", phx_click: "resolve", phx_value_status: "done", phx_value_instance_id: next_instance.id, phx_disable_with: "saving...", class: "btn btn-light btn-sm text-success border" %>
+          <%= link "😕 Won't do", to: "#", phx_click: "resolve", phx_value_status: "wont_do", phx_value_instance_id: next_instance.id, phx_disable_with: "saving...", class: "btn btn-light btn-sm text-danger border" %>
         <% else %>
           <div class="text-muted em text-center">not due yet</div>
         <% end %>
