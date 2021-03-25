@@ -21,6 +21,7 @@ window.$ = $
 // import socket from "./socket"
 
 import "./jquery_utilities"
+import "./triggers"
 
 //
 // Set up LiveView

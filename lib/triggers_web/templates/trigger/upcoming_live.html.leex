@@ -1,0 +1,66 @@
+<div class="u-relative">
+  <div class="u-abs-tr mt-n2">
+    <%= link "+ New trigger", to: Routes.trigger_path(TriggersWeb.Endpoint, :new) %>
+  </div>
+</div>
+
+<h3 class="text-center">Active triggers</h3>
+
+<table class="table table-sm w-auto mx-auto">
+  <%= for trigger <- @triggers do %>
+    <% past_instances = get_latest_resolved_instances(trigger, 50) %>
+    <% next_instance = Trigger.next_instance(trigger) %>
+    <tr>
+
+      <td class='align-middle nowrap <%= if due_before_today?(next_instance), do: "text-danger" %>'>
+        <%= if due_on_today?(next_instance) do %>
+          Today
+        <% else %>
+          <%= H.print_date(next_instance.due_at, @current_user, format: "%a %b %e") %>
+        <% end %>
+      </td>
+
+      <td class='align-middle nowrap <%= time_class(next_instance) %>'>
+        <%= H.print_time(next_instance.due_at, @current_user) %>
+      </td>
+
+      <td class="">
+        <div class="mt-n1">
+          <%= past_instances |> Enum.with_index() |> Enum.map(fn {instance, index} -> %>
+            <% width = max(30 - (index*2), 1) %>
+            <div class='resolved-bar --<%= instance.status %>' style="width: <%= width %>px;"></div>
+          <% end) %>
+        </div>
+        <div class="clearfix"></div>
+        <div class="pt-1"><%= trigger.title %></div>
+      </td>
+
+      <td class="align-middle nowrap">
+        <%= if due_by_today?(next_instance) do %>
+          <%= link "🎉 Done!", to: "#", phx_click: "resolve", phx_value_status: "done", phx_value_instance_id: next_instance.id, phx_disable_with: "saving...", class: "btn btn-light btn-sm text-success border" %>
+          <%= link "😕 Won't do", to: "#", phx_click: "resolve", phx_value_status: "wont_do", phx_value_instance_id: next_instance.id, phx_disable_with: "saving...", class: "btn btn-light btn-sm text-danger border" %>
+        <% else %>
+          <div class="text-muted em text-center">not due yet</div>
+        <% end %>
+      </td>
+
+      <td class="align-middle">
+        <span class="dropdown">
+          <a href="#" class="btn btn-link dropdown-toggle py-0 border" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+          <div class="dropdown-menu dropdown-menu--small dropdown-menu-right">
+            <%= link icon("zoom_in", "Details"), to: Routes.trigger_path(TriggersWeb.Endpoint, :show, trigger), class: "dropdown-item" %>
+            <%= link icon("edit", "Edit"), to: Routes.trigger_path(TriggersWeb.Endpoint, :edit, trigger, return_to: "upcoming"), class: "dropdown-item" %>
+            <%= unless due_by_today?(next_instance) do %>
+              <%= link icon("done", "Mark done"), to: Routes.trigger_path(TriggersWeb.Endpoint, :resolve, next_instance.id, status: "done", return_to: "upcoming"), class: "dropdown-item text-success" %>
+            <% end %>
+          </div>
+        </span>
+
+      </td>
+    </tr>
+  <% end %>
+</table>
+
+<%= if length(@triggers) == 0 do %>
+  <div class="em text-muted">Nothing to see here yet. Click on New Trigger to get started.</div>
+<% end %>

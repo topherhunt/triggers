@@ -12,6 +12,12 @@ defmodule TriggersWeb.TriggerController do
   # The "main" view. Lists all triggers that are due now or due in the future,
   # ordered by due date/time ascending.
   def upcoming(conn, _params) do
+    user = conn.assigns.current_user
+    render(conn, "upcoming.html", triggers: load_upcoming_triggers(user))
+  end
+
+  # An experimental LiveView version of the Upcoming list. (probably won't use this)
+  def upcoming_live(conn, _params) do
     live_render(conn, TriggersWeb.UpcomingTriggersLive,
       session: %{"current_user_id" => conn.assigns.current_user.id})
   end
@@ -66,7 +72,7 @@ defmodule TriggersWeb.TriggerController do
       {:ok, trigger} ->
         conn
         |> put_flash(:info, "Trigger saved.")
-        |> redirect(to: return_to_path(conn, trigger))
+        |> redirect(to: return_to_path(conn, trigger.id))
       {:error, changeset} ->
         render(conn, "edit.html", trigger: trigger, changeset: changeset)
     end
@@ -82,16 +88,23 @@ defmodule TriggersWeb.TriggerController do
     |> redirect(to: Routes.trigger_path(conn, :upcoming))
   end
 
-  def resolve(conn, %{"instance_id" => instance_id, "status" => status}) do
+  def resolve(conn, params) do
     user = conn.assigns.current_user
+    instance_id = Map.fetch!(params, "instance_id")
+    status = Map.fetch!(params, "status")
     instance = TriggerInstance.filter(id: instance_id, user: user) |> Repo.one!()
-    trigger = Repo.get!(Trigger, instance.trigger_id)
     Data.update_trigger_instance!(instance, %{status: status})
-    Trigger.refresh_active_instance!(trigger)
+    Repo.get!(Trigger, instance.trigger_id) |> Trigger.refresh_active_instance!()
 
-    conn
-    |> put_flash(:info, (if status == "done", do: happy(), else: sad()))
-    |> redirect(to: return_to_path(conn, trigger))
+    if H.xhr?(conn) do
+      triggers = load_upcoming_triggers(user)
+      table_html = Phoenix.View.render_to_string(TriggersWeb.TriggerView, "_upcoming_list.html", conn: conn, current_user: user, triggers: triggers)
+      json(conn, %{table_html: table_html})
+    else
+      conn
+      |> put_flash(:info, (if status == "done", do: happy(), else: sad()))
+      |> redirect(to: return_to_path(conn, instance.trigger_id))
+    end
   end
 
   #
@@ -102,11 +115,18 @@ defmodule TriggersWeb.TriggerController do
     Trigger.filter(user: conn.assigns.current_user, id: id) |> Repo.one!()
   end
 
-  defp return_to_path(conn, trigger) do
+  defp load_upcoming_triggers(user) do
+    Trigger.filter(user: user, active: true)
+    |> preload(:trigger_instances)
+    |> Repo.all()
+    |> Enum.sort_by(& Trigger.next_instance_timestamp(&1))
+  end
+
+  defp return_to_path(conn, trigger_id) do
     case conn.params["return_to"] do
       "upcoming" -> Routes.trigger_path(conn, :upcoming)
       "history" -> Routes.trigger_path(conn, :history)
-      _ -> Routes.trigger_path(conn, :show, trigger)
+      _ -> Routes.trigger_path(conn, :show, trigger_id)
     end
   end
 

@@ -59,6 +59,7 @@ defmodule TriggersWeb.Router do
     patch "/account/update_email", UserController, :update_email
 
     get "/triggers/upcoming", TriggerController, :upcoming
+    get "/triggers/upcoming_live", TriggerController, :upcoming_live
     get "/triggers/history", TriggerController, :history
     get "/triggers/:instance_id/resolve", TriggerController, :resolve
     resources "/triggers", TriggerController, except: [:index]

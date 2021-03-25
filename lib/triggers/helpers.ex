@@ -2,6 +2,14 @@
 defmodule Triggers.Helpers do
 
   #
+  # Controller requests
+  #
+
+  def xhr?(%Plug.Conn{} = conn) do
+    Enum.join(Plug.Conn.get_req_header(conn, "accept")) =~ "json"
+  end
+
+  #
   # System
   #
 

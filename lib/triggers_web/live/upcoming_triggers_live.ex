@@ -6,7 +6,7 @@ defmodule TriggersWeb.UpcomingTriggersLive do
   require Logger
 
   def render(assigns) do
-    TriggersWeb.TriggerView.render("upcoming.html", assigns)
+    TriggersWeb.TriggerView.render("upcoming_live.html", assigns)
   end
 
   def mount(_params, session, socket) do
@@ -33,18 +33,6 @@ defmodule TriggersWeb.UpcomingTriggersLive do
     |> assign(triggers: load_triggers(user))
     |> noreply()
   end
-
-  # def handle_event("inc", _value, socket) do
-  #   socket
-  #   |> assign(count: socket.assigns.count + 1)
-  #   |> noreply()
-  # end
-
-  # def handle_event("dec", _value, socket) do
-  #   socket
-  #   |> assign(count: socket.assigns.count - 1)
-  #   |> noreply()
-  # end
 
   #
   # Low-level helpers

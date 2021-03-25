@@ -1,0 +1,13 @@
+<div class="u-relative">
+  <div class="u-abs-tr mt-n2">
+    <%= link "+ New trigger", to: Routes.trigger_path(@conn, :new) %>
+  </div>
+</div>
+
+<h3 class="text-center">Active triggers</h3>
+
+<%= render "_upcoming_list.html", assigns %>
+
+<%= if length(@triggers) == 0 do %>
+  <div class="em text-muted">Nothing to see here yet. Click on New Trigger to get started.</div>
+<% end %>
