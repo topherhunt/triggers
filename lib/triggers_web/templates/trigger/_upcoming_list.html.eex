@@ -24,7 +24,7 @@
           <% end) %>
         </div>
         <div class="clearfix"></div>
-        <div class="pt-1"><%= trigger.title %></div>
+        <div class=""><%= trigger.title %></div>
       </td>
 
       <td class="align-middle nowrap">

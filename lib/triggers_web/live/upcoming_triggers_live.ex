@@ -1,3 +1,8 @@
+# I tried a quick spike to rewrite the Upcoming list as a LiveView. The response time was
+# nice and the lifecycle model was simple (though still hard for me to reason about, for
+# some reason) but there were weird bugs with divs getting misaligned on re-render.
+# I reverted to a "plain old jquery listeners" approach and feel pretty happy with that.
+#
 defmodule TriggersWeb.UpcomingTriggersLive do
   use TriggersWeb, :live_view
   import Ecto.Query

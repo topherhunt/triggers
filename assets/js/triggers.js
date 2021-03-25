@@ -16,7 +16,9 @@ $(function(){
           $('.js-upcoming-triggers-list').replaceWith(data.table_html);
           addResolveButtonListeners();
         },
-        error: function(){ alert("Unable to save your changes. Please refresh the page."); }
+        error: function(){
+          alert("Unable to save your changes. Please refresh the page.");
+        }
       });
     });
   };
