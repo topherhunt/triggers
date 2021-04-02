@@ -61,6 +61,7 @@ defmodule TriggersWeb.Router do
     get "/triggers/upcoming", TriggerController, :upcoming
     get "/triggers/upcoming_live", TriggerController, :upcoming_live
     get "/triggers/history", TriggerController, :history
+    get "/triggers/browser_nag", TriggerController, :browser_nag
     get "/triggers/:instance_id/resolve", TriggerController, :resolve
     resources "/triggers", TriggerController, except: [:index]
   end

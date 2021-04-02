@@ -1,3 +1,5 @@
+<div class="js-browser-nags"></div>
+
 <div class="u-relative">
   <div class="u-abs-tr mt-n2">
     <%= link "+ New trigger", to: Routes.trigger_path(@conn, :new) %>

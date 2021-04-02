@@ -107,6 +107,23 @@ defmodule TriggersWeb.TriggerController do
     end
   end
 
+  def browser_nag(conn, _params) do
+    user = conn.assigns.current_user
+
+    triggers =
+      Trigger.filter(user: user, due: true, can_nag: true)
+      |> preload(:trigger_instances)
+      |> Repo.all()
+      |> Enum.sort_by(& Trigger.next_instance_timestamp(&1))
+
+    preview = triggers |> Enum.map(& &1.title) |> Enum.join(", ") |> String.slice(0..100)
+
+    json(conn, %{
+      num_due: length(triggers),
+      preview: preview
+    })
+  end
+
   #
   # Internal
   #
