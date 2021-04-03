@@ -96,6 +96,6 @@ defmodule TriggersWeb.AuthPlugs do
   defp parse_time(string), do: Timex.parse!(string, "{ISO:Extended}")
 
   defp new_expiration_string do
-    H.now() |> Timex.shift(days: +1) |> Timex.format!("{ISO:Extended}")
+    H.now() |> Timex.shift(days: +7) |> Timex.format!("{ISO:Extended}")
   end
 end
