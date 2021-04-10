@@ -28,28 +28,36 @@ $(function(){
   if ($('.js-browser-nags').length > 0) {
 
     if (Notification.permission != 'granted') {
-      Notification.requestPermission();
+      $('.js-notifications-blocked').show();
     }
+
+    $('.js-enable-notifications').click(function(e){
+      e.preventDefault();
+      Notification.requestPermission().then(function(){
+        $('.js-notifications-blocked').fadeOut();
+      });
+    });
 
     window.showBrowserNotification = function(){
       if (!window.Notification) {
-        alert("Your browser doesn't support desktop notifications.");
+        $('.js-notifications-not-supported').show();
         return;
       }
 
       if (Notification.permission != 'granted') {
-        alert("Please refresh the page and give permission to show notifications.");
+        $('.js-notifications-blocked').show();
         return;
       }
 
       json_request("GET", "/triggers/browser_nag", {
         success: function(data){
           if (data.num_due > 0) {
-            new Notification("You have "+data.num_due+" due triggers!", {
-              body: data.preview,
-              // Disabling this for now because it breaks the notification on Chrome...?
-              // requireInteraction: true
-            });
+            var title = "You have "+data.num_due+" due triggers!";
+            var body = data.preview;
+            // requireInteraction is broken on both Chrome and FF as of 2021-04.
+            // See https://stackoverflow.com/q/67038441/1729692
+            new Notification(title, {body: body});
+            playMeow();
           }
         },
         error: function(){
@@ -58,7 +66,14 @@ $(function(){
       });
     };
 
-    window.setInterval(showBrowserNotification, 1000 * 60 * 5);
+    window.setInterval(showBrowserNotification, 1000 * 60 * 3);
+
+    function playMeow() {
+      var n = Math.ceil(Math.random() * 3);
+      var audio = new Audio("/sounds/nag"+n+".mp3");
+      audio.volume = 0.1;
+      audio.play();
+    }
   }
 
 });

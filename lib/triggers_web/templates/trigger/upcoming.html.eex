@@ -1,4 +1,8 @@
 <div class="js-browser-nags"></div>
+<div class="js-notifications-not-supported u-hidden alert alert-warning">This browser doesn't support browser notifications. Automatic task reminders will be disabled until you switch to a more modern browser.</div>
+<div class="js-notifications-blocked u-hidden alert alert-warning">
+  <%= link "Enable browser notifications", to: "#", class: "js-enable-notifications" %> to display task reminders while this window is open.
+</div>
 
 <div class="u-relative">
   <div class="u-abs-tr mt-n2">

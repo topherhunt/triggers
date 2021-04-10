@@ -23,7 +23,7 @@ defmodule TriggersWeb.Endpoint do
     at: "/",
     from: :triggers,
     gzip: false,
-    only: ~w(css fonts images js favicon.ico robots.txt)
+    only: ~w(css js fonts images sounds favicon.ico robots.txt)
 
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
