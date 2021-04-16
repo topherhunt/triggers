@@ -18,14 +18,23 @@
   }
 }
 
+.resolved-bar-wrapper {
+  height: 5px;
+  width: 100%;
+  overflow: hidden;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
 .resolved-bar {
   float: left;
   width: 0.8rem;
   height: 5px;
-  border-radius: 2px;
+  // border-radius: 2px;
+  // margin-right: px;
   overflow: hidden;
   background-color: #000;
-  // border-right: 0.5px solid rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.5);
 
   &.--done { background-color: #28a745; }
   &.--wont_do { background-color: #dc3545; }

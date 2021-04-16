@@ -1,4 +1,4 @@
-<table class="table table-sm w-auto mx-auto js-upcoming-triggers-list">
+<table class="table table-sm table-borderless w-auto mx-auto js-upcoming-triggers-list">
   <%= for trigger <- @triggers do %>
     <% past_instances = get_latest_resolved_instances(trigger, 50) %>
     <% next_instance = Trigger.next_instance(trigger) %>
@@ -17,14 +17,13 @@
       </td>
 
       <td class="">
-        <div class="mt-n1">
+        <div class=""><%= trigger.title %></div>
+        <div class="resolved-bar-wrapper">
           <%= past_instances |> Enum.with_index() |> Enum.map(fn {instance, index} -> %>
             <% width = max(30 - (index*2), 1) %>
             <div class='resolved-bar --<%= instance.status %>' style="width: <%= width %>px;"></div>
           <% end) %>
         </div>
-        <div class="clearfix"></div>
-        <div class=""><%= trigger.title %></div>
       </td>
 
       <td class="align-middle nowrap">

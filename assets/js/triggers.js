@@ -71,7 +71,7 @@ $(function(){
     function playMeow() {
       var n = Math.ceil(Math.random() * 3);
       var audio = new Audio("/sounds/nag"+n+".mp3");
-      audio.volume = 0.1;
+      audio.volume = 0.2;
       audio.play();
     }
   }

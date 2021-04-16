@@ -33,7 +33,8 @@ config :rollbax,
 
 config :triggers, Triggers.Scheduler,
   jobs: [
-    {"*/10 * * * *", {Triggers.Nagger, :send_nags, []}}
+    # Send an hourly email reminder of tasks due
+    {"15 * * * *", {Triggers.Nagger, :send_nags, []}}
   ]
 
 # ## SSL Support
