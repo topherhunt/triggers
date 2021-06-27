@@ -29,14 +29,14 @@ window.testError = function() {
   return someRandomFunctionName()
 };
 
+// Less verbose wrapper around Jquery $.ajax - see https://api.jquery.com/Jquery.ajax/
 window.json_request = function(method, url, opts) {
   opts = opts || {};
-  // See https://api.jquery.com/Jquery.ajax/
   $.ajax({
     method: method,
     url: url,
-    data: opts.data || {},
     dataType: "json",
+    data: opts.data || {},
     success: function(data, status, xhr){
       console.log("Request "+method+" "+url+" success ("+xhr.status+").");
       if (opts.success) { opts.success(data, status, xhr); }
