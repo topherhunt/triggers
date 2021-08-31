@@ -16,9 +16,9 @@
   </div>
 
   <div class="form-group">
-    <%= label f, :why, "Why?" %> <%= required() %>
+    <%= label f, :why, "Why?" %>
     <div class="small text-muted mt-n2">Why is this task worth getting nagged over? <%= link icon("video_library"), to: "https://youtu.be/d4ftmOI5NnI?t=74", target: "_blank" %></div>
-    <%= textarea f, :why, class: "form-control", required: true %>
+    <%= textarea f, :why, class: "form-control" %>
     <%= error_tag f, :why %>
   </div>
 

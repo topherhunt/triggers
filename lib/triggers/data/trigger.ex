@@ -23,7 +23,7 @@ defmodule Triggers.Data.Trigger do
   def changeset(struct, params, :admin) do
     struct
     |> cast(params, [:user_id, :title, :why, :details, :first_due_date, :due_time, :repeat_in_unit, :repeat_in, :last_nagged_at])
-    |> validate_required([:user_id, :title, :why, :first_due_date, :due_time])
+    |> validate_required([:user_id, :title, :first_due_date, :due_time])
     |> validate_inclusion(:repeat_in_unit, ["day", "week", "month"])
     |> validate_repeat_in_fields()
   end
@@ -83,11 +83,21 @@ defmodule Triggers.Data.Trigger do
 
       trigger.repeat_in != nil ->
         # This trigger is recurring, so we need to add the next-due instance.
-        # To keep the logic simple & easy to reason about, a trigger's next instance
-        # due date may be in the past; there's no "auto jump forward in time" function.
-        date =
+        date = min_date(
+          # Set the due date to whatever time interval covers today...
           trigger.first_due_date
-          |> advance_by_repeat_interval(trigger, until_past: H.to_date(last_resolved.due_at))
+            |> IO.inspect(label: "first_due_date")
+            |> advance_by_repeat_interval(trigger, until_past: H.yesterday())
+            |> IO.inspect(label: "until past yesterday")
+            |> add_repeat_interval(trigger, -1)
+            |> IO.inspect(label: "after removing 1 repeat_interval"),
+          # ...but it must be later than the last due date.
+          trigger.first_due_date
+            |> advance_by_repeat_interval(trigger, until_past: H.to_date(last_resolved.due_at))
+            |> IO.inspect(label: "until past last resolved")
+        )
+
+        IO.puts "Adding new instance on date: #{date}"
         add_new_instance(trigger, date)
 
       true ->
@@ -97,22 +107,26 @@ defmodule Triggers.Data.Trigger do
     end
   end
 
+  defp min_date(a, b) do
+    if H.date_gt?(a, b), do: a, else: b
+  end
+
   # Given a starting date, repeatedly step forward in time by the trigger's repeat interval
   # until the `until_past` date has been passed.
   def advance_by_repeat_interval(date, trigger, [until_past: %Date{} = until_past]) do
     if H.date_gt?(date, until_past) do
       date
     else
-      date = add_repeat_interval(date, trigger)
+      date = add_repeat_interval(date, trigger, 1)
       advance_by_repeat_interval(date, trigger, until_past: until_past)
     end
   end
 
-  def add_repeat_interval(date, %__MODULE__{} = trigger) do
+  def add_repeat_interval(date, %__MODULE__{} = trigger, num) do
     case trigger.repeat_in_unit do
-      "day" -> date |> Timex.shift(days: trigger.repeat_in)
-      "week" -> date |> Timex.shift(weeks: trigger.repeat_in)
-      "month" -> date |> Timex.shift(months: trigger.repeat_in)
+      "day" -> date |> Timex.shift(days: trigger.repeat_in * num)
+      "week" -> date |> Timex.shift(weeks: trigger.repeat_in * num)
+      "month" -> date |> Timex.shift(months: trigger.repeat_in * num)
     end
   end
 

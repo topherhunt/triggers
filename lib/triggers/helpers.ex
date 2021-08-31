@@ -73,6 +73,7 @@ defmodule Triggers.Helpers do
   #
 
   def today, do: Date.utc_today()
+  def yesterday, do: Date.utc_today() |> Date.add(-1)
 
   def to_date(nil), do: nil
   def to_date(%DateTime{} = dt), do: DateTime.to_date(dt)
