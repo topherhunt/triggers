@@ -116,6 +116,14 @@ defmodule TriggersWeb.TriggerController do
       |> Repo.all()
       |> Enum.sort_by(& Trigger.next_instance_timestamp(&1))
 
+    # Reduce the frequency of nags when there's only a few tasks remaining.
+    triggers = cond do
+      length(triggers) == 1 && :rand.uniform(100) <= 75 -> []
+      length(triggers) == 2 && :rand.uniform(100) <= 50 -> []
+      length(triggers) == 3 && :rand.uniform(100) <= 25 -> []
+      true -> triggers
+    end
+
     preview = triggers |> Enum.map(& &1.title) |> Enum.join(", ") |> String.slice(0..100)
 
     json(conn, %{

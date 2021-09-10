@@ -51,6 +51,7 @@ $(function(){
 
       json_request("GET", "/triggers/browser_nag", {
         success: function(data){
+          $('.js-notifications-broken').hide();
           if (data.num_due > 0) {
             var title = "You have "+data.num_due+" due triggers!";
             var body = data.preview;
@@ -61,7 +62,7 @@ $(function(){
           }
         },
         error: function(){
-          alert("Error checking for due triggers. Please refresh the page.");
+          $('.js-notifications-broken').show();
         }
       });
     };

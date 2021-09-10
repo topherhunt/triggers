@@ -86,15 +86,15 @@ defmodule Triggers.Data.Trigger do
         date = min_date(
           # Set the due date to whatever time interval covers today...
           trigger.first_due_date
-            |> IO.inspect(label: "first_due_date")
+            # |> IO.inspect(label: "first_due_date")
             |> advance_by_repeat_interval(trigger, until_past: H.yesterday())
-            |> IO.inspect(label: "until past yesterday")
-            |> add_repeat_interval(trigger, -1)
-            |> IO.inspect(label: "after removing 1 repeat_interval"),
+            # |> IO.inspect(label: "until past yesterday")
+            |> add_repeat_interval(trigger, -1),
+            # |> IO.inspect(label: "after removing 1 repeat_interval"),
           # ...but it must be later than the last due date.
           trigger.first_due_date
             |> advance_by_repeat_interval(trigger, until_past: H.to_date(last_resolved.due_at))
-            |> IO.inspect(label: "until past last resolved")
+            # |> IO.inspect(label: "until past last resolved")
         )
 
         IO.puts "Adding new instance on date: #{date}"
