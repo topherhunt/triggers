@@ -39,6 +39,10 @@
         <% end %>
       </td>
     </tr>
+    <tr>
+      <th>On hold?</th>
+      <td><%= if @trigger.on_hold, do: "yes", else: "no" %></td>
+    </tr>
   </table>
 
 

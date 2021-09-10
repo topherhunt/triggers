@@ -51,6 +51,15 @@
   </div>
 
   <div class="form-group">
+    <label>
+      <%= checkbox f, :on_hold %>
+      <span class="u-tooltip-target">&nbsp; On hold
+        <div class="u-tooltip u-tooltip-multiline">Disable this trigger, but keep it an the bottom of your list so you won't forget about it and can re-enable it when you want.</div>
+      </span>
+    </label>
+  </div>
+
+  <div class="form-group">
     <input type="hidden" name="return_to" value='<%= @conn.params["return_to"] %>'>
     <%= submit "Save", class: "btn btn-primary" %>
   </div>

@@ -13,7 +13,10 @@ defmodule TriggersWeb.TriggerController do
   # ordered by due date/time ascending.
   def upcoming(conn, _params) do
     user = conn.assigns.current_user
-    render(conn, "upcoming.html", triggers: load_upcoming_triggers(user))
+    render(conn, "upcoming.html",
+      triggers: load_upcoming_triggers(user),
+      on_hold: load_on_hold(user)
+    )
   end
 
   # An experimental LiveView version of the Upcoming list. (probably won't use this)
@@ -111,7 +114,7 @@ defmodule TriggersWeb.TriggerController do
     user = conn.assigns.current_user
 
     triggers =
-      Trigger.filter(user: user, due: true, can_nag: true)
+      Trigger.filter(user: user, due: true, can_nag: true, on_hold: false)
       |> preload(:trigger_instances)
       |> Repo.all()
       |> Enum.sort_by(& Trigger.next_instance_timestamp(&1))
@@ -141,10 +144,16 @@ defmodule TriggersWeb.TriggerController do
   end
 
   defp load_upcoming_triggers(user) do
-    Trigger.filter(user: user, active: true)
+    Trigger.filter(user: user, active: true, on_hold: false)
     |> preload(:trigger_instances)
     |> Repo.all()
     |> Enum.sort_by(& Trigger.next_instance_timestamp(&1))
+  end
+
+  defp load_on_hold(user) do
+    Trigger.filter(user: user, on_hold: true)
+    |> order_by(:due_time)
+    |> Repo.all()
   end
 
   defp return_to_path(conn, trigger_id) do

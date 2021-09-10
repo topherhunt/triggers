@@ -17,12 +17,13 @@ defmodule Triggers.Data.Trigger do
     field :repeat_in_unit, :string # eg. "day"
     field :repeat_in, :integer     # eg. 3
     field :last_nagged_at, :utc_datetime
+    field :on_hold, :boolean
     timestamps()
   end
 
   def changeset(struct, params, :admin) do
     struct
-    |> cast(params, [:user_id, :title, :why, :details, :first_due_date, :due_time, :repeat_in_unit, :repeat_in, :last_nagged_at])
+    |> cast(params, [:user_id, :title, :why, :details, :first_due_date, :due_time, :repeat_in_unit, :repeat_in, :last_nagged_at, :on_hold])
     |> validate_required([:user_id, :title, :first_due_date, :due_time])
     |> validate_inclusion(:repeat_in_unit, ["day", "week", "month"])
     |> validate_repeat_in_fields()
@@ -30,7 +31,7 @@ defmodule Triggers.Data.Trigger do
 
   def changeset(struct, params, :owner) do
     struct
-    |> cast(params, [:title, :why, :details, :first_due_date, :due_time, :repeat_in_unit, :repeat_in])
+    |> cast(params, [:title, :why, :details, :first_due_date, :due_time, :repeat_in_unit, :repeat_in, :on_hold])
     |> changeset(%{}, :admin) # now do the standard validations & data prep steps
   end
 
@@ -66,6 +67,7 @@ defmodule Triggers.Data.Trigger do
   # Clears and repopulates the next/active/unresolved instance (if any) of this trigger.
   # A trigger should always have 1+ instances, and a repeating trigger should always have
   # one unresolved instance.
+  # TODO: Move this to a dedicated service module.
   def refresh_active_instance!(%__MODULE__{} = trigger) do
     # Delete all active/unresolved instances (if any; this will often be a no-op)
     TriggerInstance.filter(trigger: trigger, resolved: false) |> Repo.delete_all()
@@ -171,4 +173,6 @@ defmodule Triggers.Data.Trigger do
   def filter(query, :due, true) do
     where(query, [t], fragment("EXISTS (SELECT * FROM trigger_instances i WHERE i.trigger_id = ? AND i.status IS NULL AND i.due_at <= ?)", t.id, ^H.now()))
   end
+
+  def filter(query, :on_hold, val), do: where(query, [t], t.on_hold == ^val)
 end

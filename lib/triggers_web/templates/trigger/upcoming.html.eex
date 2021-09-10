@@ -25,3 +25,30 @@
 <%= if length(@triggers) == 0 do %>
   <div class="em text-muted">Nothing to see here yet. Click on New Trigger to get started.</div>
 <% end %>
+
+<%= if @on_hold != [] do %>
+  <h3 class="text-muted text-center">On hold</h3>
+  <table class="table table-sm table-borderless w-auto mx-auto">
+    <tr>
+      <th>What</th>
+      <th>When</th>
+      <th></th>
+    </tr>
+    <%= for trigger <- @on_hold do %>
+      <tr>
+        <td><%= trigger.title %> &nbsp;</td>
+        <td>
+          <%= if trigger.repeat_in do %>
+            every <%= trigger.repeat_in %> <%= trigger.repeat_in_unit %>s
+          <% else %>
+            <%= trigger.first_due_date %>
+          <% end %>
+        </td>
+        <td>
+          <%= link "show", to: Routes.trigger_path(@conn, :show, trigger) %> &nbsp;
+          <%= link "edit", to: Routes.trigger_path(@conn, :edit, trigger) %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
